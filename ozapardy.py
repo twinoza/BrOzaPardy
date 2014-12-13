@@ -5,6 +5,7 @@ Program: Jeopardy.py
 Author:  Norm Oza, Nick Oza, Neal Oza
 Date:  Started Dec 16, 2012
 
+Dec 24th 2013:  Fixed bugs to actually make it work.
 '''
 import gdata.docs
 import gdata.docs.service
@@ -31,9 +32,6 @@ ID_TIMER = 2000
 ID_TIMER2 = 2001
 serDelay = 50
 countdownDelay = 1000
-res_hgt = 1280
-res_wid = 768
-fontBase = 14
 #print ser
 
 class ozaPardyBox(object):
@@ -111,7 +109,7 @@ class mainWin(wx.Frame):
 
         [self.micePanel, self.bPanel, self.menPanel] = self.updateHeader()
 #        doc_name = raw_input('What is name of OzaPardy sheet? Sheet must be shared with cmozafam@gmail.com...\nType in Sheetname: ')
-        doc_name="OzaPardy2012"
+        doc_name="OzaPardy"
         [self.stPanel, self.sgPanel] = self.initGameBoxes('Single',doc_name)
         [self.dtPanel, self.dgPanel] = self.initGameBoxes('Double',doc_name)
         self.initFinalBox()
@@ -149,6 +147,20 @@ class mainWin(wx.Frame):
             #self.queue.put(msg)
         self.serialTimer.Start()
 
+
+    # This function will restart the Serial port.  This entails flushing the serial input buffer, sending an 'R' out on the serial output buffer (to reset the Arduino mode), and then starting the serialTimer
+    # hwStateLetter = [R|W|L] can be any of the following:
+    #   R: Sets the (R)estartFlag of the HW state to be true
+    #   W: Tells the HW that a (W)rong answer was given
+    #   L: Un(L)ocks the HW to enable the clickers
+    def restartSerial(self, hwStateLetter):
+        self.serialTimer.Stop()
+        ser.flushInput()
+        ser.flushOutput()
+        print "HW State Letter: ", hwStateLetter
+        ser.write(hwStateLetter)
+        self.serialTimer.Start()
+
     def timerFunc(self, e):
         timerId = e.GetId()
         if timerId == ID_TIMER:
@@ -177,7 +189,7 @@ class mainWin(wx.Frame):
     # gameType = 0: Single Jeopardy
     # gameType = 1: Double Jeopardy
     # gameType = 2: Final Jeopardy
-    def getJeopardyData(self, gameType=0, doc_name="OzaPardy2012"):
+    def getJeopardyData(self, gameType=0, doc_name="OzaPardy"):
         username        = 'cmozafam@gmail.com'
         passwd          = 'Jeopardy4us'
 #        doc_name = raw_input('What is name of OzaPardy sheet? Sheet must be shared with cmozafam@gmail.com...\nType in Sheetname: ')
@@ -188,7 +200,7 @@ class mainWin(wx.Frame):
         gd_client = gdata.spreadsheet.service.SpreadsheetsService()
         gd_client.email = username
         gd_client.password = passwd
-        gd_client.source = 'payne.org-example-1'
+        gd_client.source = 'Jeopardy.py'
         gd_client.ProgrammaticLogin()
 
         q = gdata.spreadsheet.service.DocumentQuery()
@@ -211,16 +223,16 @@ class mainWin(wx.Frame):
                     else:               # Fill in Clue/Response boxes
                         self.parseOzaPardyBox(self.boxes[gameType][boxNum], key, row.custom)
 
-    def getFinalJeopardy(self):
+    def getFinalJeopardy(self, doc_name = 'OzaPardy'):
         username        = 'cmozafam@gmail.com'
         passwd          = 'Jeopardy4us'
-        doc_name        = 'OzaPardy'
+#        doc_name        = 'OzaPardy2012'
 
         print "Start getFinalJeopardy"
         gd_client = gdata.spreadsheet.service.SpreadsheetsService()
         gd_client.email = username
         gd_client.password = passwd
-        gd_client.source = 'payne.org-example-1'
+        gd_client.source = 'Jeopardy.py'
         gd_client.ProgrammaticLogin()
 
         q = gdata.spreadsheet.service.DocumentQuery()
@@ -234,15 +246,19 @@ class mainWin(wx.Frame):
 
         rows = gd_client.GetListFeed(spreadsheet_id, worksheet_id).entry
 
+        self.FinalBox[1].value = 1
         for rowNum, row in enumerate(rows):
             for colNum, key in enumerate(row.custom):
                 boxNum = int(ceil(rowNum/2.) + (colNum-1))
-                self.FinalBox[0] = row.custom['tiles'].text
-                self.FinalBox[1].value = 1
+                if rowNum == 0:
+                    self.FinalBox[0] = row.custom['cat1'].text
                 if rowNum == 1:
                     self.FinalBox[1].clue = self.myWrap(row.custom['cat1'].text)
                 if rowNum == 2:
                     self.FinalBox[1].response = self.myWrap(row.custom['cat1'].text)
+        print(self.FinalBox[0])
+        print(self.FinalBox[1].clue)
+        print(self.FinalBox[1].response)
 
 
     def parseOzaPardyBox(self, opBox, key, gDict):
@@ -264,7 +280,7 @@ class mainWin(wx.Frame):
         self.boxes[1][r2+6].isDailyDouble = True
         self.boxes[1][r3+6].isDailyDouble = True
 
-#        print 'DD', r1, r2, r3
+        print 'DD', r1, r2, r3
 
 
     def screenDraw(self, modeType):
@@ -299,6 +315,9 @@ class mainWin(wx.Frame):
             else:
                 self.gameMode = 'Double'
                 modeType = 'Double'
+                self.cPanel = self.newClue('Double Jeopardy')
+                self.cPanel.Show()
+                vbox.Add(self.cPanel, proportion=21, flag=wx.EXPAND)
                 
         elif modeType == 'Double':
             if not self.areWeDoneYet():
@@ -310,6 +329,9 @@ class mainWin(wx.Frame):
                 self.gameMode = 'Final'
                 modeType == 'Final'
                 self.cPanel = self.newClue('Final Jeopardy')
+                self.cPanel.Show()
+                vbox.Add(self.cPanel, proportion=21, flag=wx.EXPAND)
+        # This elif not is for "Clue", "Response", "Blank", "Klok", "Daily"
         elif not (modeType == 'Single' or modeType == 'Double'):
             self.cPanel.Show()
             vbox.Add(self.cPanel, proportion=21, flag=wx.EXPAND)
@@ -351,14 +373,14 @@ class mainWin(wx.Frame):
         for x in range(1,37):
             if x < 7:
                 title = wx.Button(tPanel, label=self.boxes[mNum][x-1]) 
-                title.SetFont(wx.Font(fontBase, wx.MODERN, wx.NORMAL, wx.BOLD))
+                title.SetFont(wx.Font(14, wx.MODERN, wx.NORMAL, wx.BOLD))
                 title.SetForegroundColour('white')
                 title.SetBackgroundColour('darkblue')
                 tSizer.AddMany( [(title, 1, wx.EXPAND)] )
             else:
                 self.boxId[x-7] = x-7
                 boxButton = wx.Button(gPanel, label=self.boxes[mNum][x-1].value, name=str(self.boxId[x-7]))
-                boxButton.SetFont(wx.Font(int(2.5*fontBase), wx.MODERN, wx.NORMAL, wx.BOLD))
+                boxButton.SetFont(wx.Font(40, wx.MODERN, wx.NORMAL, wx.BOLD))
                 boxButton.SetForegroundColour('white')
                 boxButton.SetBackgroundColour('blue')
                 boxButton.Bind(wx.EVT_BUTTON, self.OnGameButtonClicked)
@@ -385,7 +407,7 @@ class mainWin(wx.Frame):
             cButton = wx.Button(cPanel, label=cString)
         #tmpString = self.myWrap(cString)
         #cButton.SetLabel(tmpString)
-        cButton.SetFont(wx.Font(4*fontBase, wx.MODERN, wx.NORMAL, wx.BOLD))
+        cButton.SetFont(wx.Font(50, wx.MODERN, wx.NORMAL, wx.BOLD))
         cButton.SetForegroundColour('white')
         cButton.SetBackgroundColour('blue')
         cButton.Bind(wx.EVT_BUTTON, self.OnClueButtonClicked)
@@ -407,15 +429,16 @@ class mainWin(wx.Frame):
             self.cPanel = self.newClue(self.boxes[mNum][bName+6].clue)
             if self.boxes[mNum][bName+6].isDailyDouble:
                 print 'Daily Double Selected', self.currMode
-                self.currMode = 'Daily'
+                self.currMode = 'Clue'
                 self.cPanel = self.newClue('Daily Double')
-                self.screenDraw('Daily')
+                self.screenDraw('Clue')
             else: 
                 self.screenDraw('Clue')
-                ser.write('L')  # Unlock Arduino controller
+                #ser.write('L')  # Unlock Arduino controller
                 print 'XXXX - Serial Write: L'
                 #self.serialTimer.Start(serDelay)
-                self.serialTimer.Start()
+                #self.serialTimer.Start()
+                self.restartSerial('L')
             #print self.boxes[mNum][bName+6].clue
             #print self.boxes[mNum][bName+6].response
         
@@ -430,49 +453,57 @@ class mainWin(wx.Frame):
         else:
             btnLabel = e.GetEventObject().GetLabel()
             if btnLabel == clueText:
-                self.currMode = 'Blank'
+                if self.currMode != 'Daily':
+                    self.currMode = 'Blank'
                 self.screenDraw('Blank')
                 #self.currMode = 'Klok'
                 #self.screenDraw('Klok')
                 # self.timer.Start(countdownDelay)
                 # self.currClueButton = e.GetEventObject()
                 e.GetEventObject().SetLabel("")
-                # e.GetEventObject().SetLabel("Time Remaining: " + str(self.timeCounter))
-            elif btnLabel == clueText and self.currMode == 'Daily':
-                self.currMode = 'Daily'
-                self.screenDraw('Daily')
-                # self.timer.Start(countdownDelay)
-                e.GetEventObject().SetLabel("")
+                print "Going blank"
                 # e.GetEventObject().SetLabel("Time Remaining: " + str(self.timeCounter))
             elif btnLabel == 'Daily Double':
                 self.currMode = 'Daily'
-                self.screenDraw('Daily')
+                self.screenDraw('Clue')
                 self.timer.Stop()
                 self.timeCounter = 15
                 e.GetEventObject().SetLabel(clueText)
-            elif btnLabel == '' and self.currMode == 'Daily':
-                self.currMode = 'Daily'
-                self.screenDraw('Daily')
-                self.timer.Stop()
-                if self.timeCounter < 10:
-                    self.timeCounter = 10
-                e.GetEventObject().SetLabel(clueText)
             elif btnLabel == '':
-                self.currMode = 'Clue'
                 self.screenDraw('Clue')
-                self.timer.Stop()
-                if self.timeCounter < 10:
-                    self.timeCounter = 10
+                if self.currMode != 'Daily':
+                    self.currMode = 'Clue'
+                    self.timer.Stop()
+                    self.restartSerial('R') # Restart the Serial Port
+                    print "restarting Serial Port 'R'"
+                    time.sleep(.05)
+                    self.restartSerial('L') # Unlock the clickers; enable clickers
+                    print "Unlocking clickers"
+#                    self.serialTimer.Start()
+                    if self.timeCounter < 10:
+                        self.timeCounter = 10
                 e.GetEventObject().SetLabel(clueText)
+                print "Showing Clue after Blank"
+            elif btnLabel == 'Double Jeopardy':
+                self.currMode = self.gameMode
+                self.screenDraw(self.currMode)
+            elif btnLabel == 'Final Jeopardy':
+                self.screenDraw('FinalCategory')
+                e.GetEventObject().SetLabel(self.FinalBox[0])
+            elif btnLabel == self.FinalBox[0]:
+                self.screenDraw('FinalClue')
+                e.GetEventObject().SetLabel(self.FinalBox[1].clue)
+            elif btnLabel == self.FinalBox[1].clue:
+                self.screenDraw('FinalResponse')
+                e.GetEventObject().SetLabel(self.FinalBox[1].response)
             else:
-						# This should only happen when the screen is displaying the timer countdown, and then the mouse clicks the cPanel. The timer countdown should only be displayed if a clicker wsa clicked or after the clue was displayed for the Daily Double
+            # This should only happen when the screen is displaying the timer countdown, and then the mouse clicks the cPanel. The timer countdown should only be displayed if a clicker wsa clicked or after the clue was displayed for the Daily Double
                 # self.currMode = 'Clue'
                 # self.screenDraw('Clue')
                 # self.timer.Stop()
                 # if self.timeCounter < 10:
                 #     self.timeCounter = 10
                 # e.GetEventObject().SetLabel(clueText)
-                self.timer.Stop()
                 print "Host tried to click the timer.."
 
         self.Layout()
@@ -494,20 +525,20 @@ class mainWin(wx.Frame):
             btnLabel = self.currClueButton.GetLabel()
             print btnLabel
             if btnLabel == clueText:
-							# If label == Clue, change state to Klok
+              # If label == Clue, change state to Klok
                 self.currMode = 'Klok'
                 self.screenDraw('Klok')
                 self.timer.Start(countdownDelay)
                 self.currClueButton.SetLabel("Time Remaining: " + str(self.timeCounter))
 #            elif btnLabel == 'Daily Double':
-#							# If label == Daily Double, set state to Daily Double
+#             # If label == Daily Double, set state to Daily Double
 #                self.currMode = 'Daily'
 #                self.screenDraw('Daily')
 #                self.timer.Stop()
 #                self.timeCounter = 15
 #                self.currClueButton.SetLabel(clueText)
             else:
-						    print "clicker was clicked when cPanel was blank, daily double, or timer"
+                print "clicker was clicked when cPanel was blank, daily double, or timer"
 #                self.currMode = 'Clue'
 #                self.screenDraw('Clue')
 #                self.timer.Stop()
@@ -546,7 +577,7 @@ class mainWin(wx.Frame):
         self.boxes[mNum][self.currBox].isAnswered = True
         self.timer.Stop()
         self.serialTimer.Stop()
-        ser.write('W')
+        #ser.write('W')
         points = int(self.boxes[mNum][self.currBox].value)
         print "XXXX - Current team: ", self.currTeam, -1*points
         self.teams[self.currTeam].updateScore(-1*points)
@@ -554,7 +585,8 @@ class mainWin(wx.Frame):
         self.cPanel = self.newClue(self.boxes[mNum][self.currBox].clue)
         self.screenDraw('Clue')
         #self.serialTimer.Start(serDelay)
-        self.serialTimer.Start()
+        #self.serialTimer.Start()
+        self.restartSerial('W')
 
     def OnQuit(self, e):
         self.Close()
@@ -584,10 +616,10 @@ class mainWin(wx.Frame):
         
         bPanel = wx.Panel(self)
         if self.currMode != 'Klok':
-					midButton = wx.Button(bPanel, pos=(5,25), size=(550, 70), label='OzaPardy')
-					midButton.SetFont(bigNormal)
-					midButton.SetForegroundColour('darkblue')
-					midButton.Bind(wx.EVT_BUTTON, self.OnOzaPardyButtonClicked)
+          midButton = wx.Button(bPanel, pos=(5,25), size=(550, 70), label='OzaPardy')
+          midButton.SetFont(bigNormal)
+          midButton.SetForegroundColour('darkblue')
+          midButton.Bind(wx.EVT_BUTTON, self.OnOzaPardyButtonClicked)
         if self.currMode == 'Klok' or self.currMode == 'Daily':
             corButton = wx.Button(bPanel, pos=(5,104), size=(550, 50), label='Correct')
             wrgButton = wx.Button(bPanel, pos=(5,163), size=(550, 50), label='Wrong')
