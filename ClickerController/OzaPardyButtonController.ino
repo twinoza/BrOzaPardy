@@ -16,7 +16,7 @@ void setup()
   pinMode(13, OUTPUT);
 //  digitalWrite(micePort, HIGH);
 //  digitalWrite(menPort,  HIGH);
-  //pinMode(resetPort, INPUT);  // Pin 1 = resetButton
+//  pinMode(resetPort, INPUT);  // Pin 1 = resetButton
 }
 
 void loop()
