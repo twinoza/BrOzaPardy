@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 '''
-Program: Jeopardy.py
+Program: OzaPardy.py (originally named Jeopardy.py)
 Author:  Norm Oza, Nick Oza, Neal Oza
 Date:  Started Dec 16, 2012
 
@@ -17,6 +17,7 @@ import serial
 from math import *
 
 import wx
+import wx.media
 #import wx.lib.wordwrap
 #import wx.lib.wordwrap as wwrap
 import textwrap
@@ -256,6 +257,7 @@ class mainWin(wx.Frame):
                     self.FinalBox[1].clue = self.myWrap(row.custom['cat1'].text)
                 if rowNum == 2:
                     self.FinalBox[1].response = self.myWrap(row.custom['cat1'].text)
+				# Print the final jeopardy category, clue, and response to help the moderator.  The moderator is able to use the response listed to confirm or deny the accuracy of the responses given by each team.
         print(self.FinalBox[0])
         print(self.FinalBox[1].clue)
         print(self.FinalBox[1].response)
@@ -376,11 +378,16 @@ class mainWin(wx.Frame):
                 title.SetFont(wx.Font(14, wx.MODERN, wx.NORMAL, wx.BOLD))
                 title.SetForegroundColour('white')
                 title.SetBackgroundColour('darkblue')
+                # if the background color isn't being set properly, check the system 
+                # theme settings to ensure a texture isn't isn't overriding the color
+                # On ubuntu, choosing Ambiance works
+                title.Refresh()
                 tSizer.AddMany( [(title, 1, wx.EXPAND)] )
             else:
                 self.boxId[x-7] = x-7
                 boxButton = wx.Button(gPanel, label=self.boxes[mNum][x-1].value, name=str(self.boxId[x-7]))
                 boxButton.SetFont(wx.Font(40, wx.MODERN, wx.NORMAL, wx.BOLD))
+                boxButton.SetForegroundColour('blue')
                 boxButton.SetForegroundColour('white')
                 boxButton.SetBackgroundColour('blue')
                 boxButton.Bind(wx.EVT_BUTTON, self.OnGameButtonClicked)
@@ -517,7 +524,7 @@ class mainWin(wx.Frame):
         self.serialTimer.Stop()
         print "XXXX - In On Clue Clicker"
         if self.currMode == 'Response':
-        # This code should never happen
+          # This code should never happen
             print "This should never happen:(OnClueClickerClicked) Clicker should never do anything if the response is visible" 
             self.currMode = self.gameMode
             self.screenDraw(self.currMode)
