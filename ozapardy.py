@@ -194,14 +194,13 @@ class mainWin(wx.Frame):
         username        = 'cmozafam@gmail.com'
         passwd          = 'Jeopardy4us'
 #        doc_name = raw_input('What is name of OzaPardy sheet? Sheet must be shared with cmozafam@gmail.com...\nType in Sheetname: ')
-#        doc_name        = 'OzaPardy2012'
         
         print "Start getJeopardyData"
         # Connect to Google
         gd_client = gdata.spreadsheet.service.SpreadsheetsService()
         gd_client.email = username
         gd_client.password = passwd
-        gd_client.source = 'Jeopardy.py'
+        gd_client.source = 'OzaPardy.py'
         gd_client.ProgrammaticLogin()
 
         q = gdata.spreadsheet.service.DocumentQuery()
@@ -227,13 +226,12 @@ class mainWin(wx.Frame):
     def getFinalJeopardy(self, doc_name = 'OzaPardy'):
         username        = 'cmozafam@gmail.com'
         passwd          = 'Jeopardy4us'
-#        doc_name        = 'OzaPardy2012'
 
         print "Start getFinalJeopardy"
         gd_client = gdata.spreadsheet.service.SpreadsheetsService()
         gd_client.email = username
         gd_client.password = passwd
-        gd_client.source = 'Jeopardy.py'
+        gd_client.source = 'OzaPardy.py'
         gd_client.ProgrammaticLogin()
 
         q = gdata.spreadsheet.service.DocumentQuery()
@@ -257,10 +255,6 @@ class mainWin(wx.Frame):
                     self.FinalBox[1].clue = self.myWrap(row.custom['cat1'].text)
                 if rowNum == 2:
                     self.FinalBox[1].response = self.myWrap(row.custom['cat1'].text)
-				# Print the final jeopardy category, clue, and response to help the moderator.  The moderator is able to use the response listed to confirm or deny the accuracy of the responses given by each team.
-        print(self.FinalBox[0])
-        print(self.FinalBox[1].clue)
-        print(self.FinalBox[1].response)
 
 
     def parseOzaPardyBox(self, opBox, key, gDict):
@@ -331,6 +325,12 @@ class mainWin(wx.Frame):
                 self.gameMode = 'Final'
                 modeType == 'Final'
                 self.cPanel = self.newClue('Final Jeopardy')
+
+                # Print the final jeopardy category, clue, and response to help the moderator.  The moderator is able to use the response listed to confirm or deny the accuracy of the responses given by each team.
+                print('Category: ', self.FinalBox[0])
+                #print('Clue: ', self.FinalBox[1].clue)
+                print('Response: ', self.FinalBox[1].response)
+
                 self.cPanel.Show()
                 vbox.Add(self.cPanel, proportion=21, flag=wx.EXPAND)
         # This elif not is for "Clue", "Response", "Blank", "Klok", "Daily"
@@ -387,7 +387,6 @@ class mainWin(wx.Frame):
                 self.boxId[x-7] = x-7
                 boxButton = wx.Button(gPanel, label=self.boxes[mNum][x-1].value, name=str(self.boxId[x-7]))
                 boxButton.SetFont(wx.Font(40, wx.MODERN, wx.NORMAL, wx.BOLD))
-                boxButton.SetForegroundColour('blue')
                 boxButton.SetForegroundColour('white')
                 boxButton.SetBackgroundColour('blue')
                 boxButton.Bind(wx.EVT_BUTTON, self.OnGameButtonClicked)
@@ -446,13 +445,16 @@ class mainWin(wx.Frame):
                 #self.serialTimer.Start(serDelay)
                 #self.serialTimer.Start()
                 self.restartSerial('L')
-            #print self.boxes[mNum][bName+6].clue
-            #print self.boxes[mNum][bName+6].response
+            #print "Clue: ", self.boxes[mNum][bName+6].clue
+            print "Response: ", self.boxes[mNum][bName+6].response
         
     def OnClueButtonClicked(self, e):
         tic = dt.datetime.now()
         mNum = self.mode(self.gameMode)
         clueText = self.boxes[mNum][self.currBox].clue
+
+        # Do a check to see if this clue is an audio/video clue
+
         self.serialTimer.Stop()
         if self.currMode == 'Response':
             self.currMode = self.gameMode
