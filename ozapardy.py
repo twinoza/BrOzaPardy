@@ -446,6 +446,7 @@ class mainWin(wx.Frame):
                 #self.serialTimer.Start()
                 self.restartSerial('L')
             #print "Clue: ", self.boxes[mNum][bName+6].clue
+            print "foo bar"
             print "Response: ", self.boxes[mNum][bName+6].response
         
     def OnClueButtonClicked(self, e):
