@@ -56,3 +56,28 @@ When the clue buttons are clicked:
 
     After this the host must click the response button to return back to the
     main board
+
+Creating the clues and responses using GSheets:
+===========================================================================
+Input the clues and responses into the shared google doc named OzaPardy<year>
+
+Special Notes:
+   If you are using media of anytype, then your clue should be written as below:
+     For an image clue(png,bmp):
+       Img<>ImageFileName<>ClueText
+     For an audio clue(mp3 or wav):
+       Aud<>AudioFileName<>ClueText
+     For a video clue(mp4):
+       Vid<>VideoFileName<>ClueText
+
+    where:
+      The first part (Img, Aud, Vid) tells the program what type of media 
+        file is going to be used.
+      XXXXXFileName is just the filename without the path
+      ClueText is the same clue text that you would put if it wasn't a 
+        media-based clue
+      The delimiters are mandated to be '<>', as shown in the notes above
+
+  Example Image File Entry:
+    Img<>picOfNick.png<>This joker is known for his JOSN emails
+

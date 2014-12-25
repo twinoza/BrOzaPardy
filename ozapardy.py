@@ -18,6 +18,7 @@ from math import *
 
 import wx
 import wx.media
+import wx.lib.buttons as buttons
 #import wx.lib.wordwrap
 #import wx.lib.wordwrap as wwrap
 import textwrap
@@ -37,7 +38,7 @@ countdownDelay = 1000
 
 class ozaPardyBox(object):
     def __init__(self, clue=None, response=None, value=None, isClicked=False,
-        isDailyDouble=False, isAnswered=False, miceAns=0, menAns=0):
+        isDailyDouble=False, isAnswered=False, miceAns=0, menAns=0, mediaType=0, mediaFName=''):
         self.clue = clue
         self.response = response
         self.value = value
@@ -46,6 +47,11 @@ class ozaPardyBox(object):
         self.isAnswered = isAnswered
         self.miceAns = miceAns
         self.menAns = menAns
+
+        # 0 = Not Media, 1 = Image, 2 = Audio, 3 = Video 
+        self.mediaType = mediaType
+        self.mediaFName = mediaFName
+
 
     def clicked(self):
         self.isClicked = True
@@ -139,9 +145,9 @@ class mainWin(wx.Frame):
         self.serialTimer.Stop()
         msg = ser.readline();
         if (msg):
-            print "XXXX - Serial Input: " + msg
+#DEBUG            print "XXXX - Serial Input: " + msg
             self.setCurrTeam(msg.strip())
-            print "XXXX - Current Team #: ", self.currTeam
+#DEBUG            print "XXXX - Current Team #: ", self.currTeam
             self.OnClueClickerClicked()
             #self.tempMsg = msg
             #ser.write('W')
@@ -156,10 +162,11 @@ class mainWin(wx.Frame):
     #   L: Un(L)ocks the HW to enable the clickers
     def restartSerial(self, hwStateLetter):
         self.serialTimer.Stop()
-        ser.flushInput()
-        ser.flushOutput()
-        print "HW State Letter: ", hwStateLetter
-        ser.write(hwStateLetter)
+        if ARDUINO:
+          ser.flushInput()
+          ser.flushOutput()
+#DEBUG          print "HW State Letter: ", hwStateLetter
+          ser.write(hwStateLetter)
         self.serialTimer.Start()
 
     def timerFunc(self, e):
@@ -260,10 +267,25 @@ class mainWin(wx.Frame):
     def parseOzaPardyBox(self, opBox, key, gDict):
         [cellType, cellVal] = gDict['tiles'].text.split()
         opBox.value = cellVal
+
+        parsedMediaType = ''
+        clue = gDict[key].text
+
+        if '<>' in gDict[key].text:
+            parsedMediaType, parsedMediaFName, clue = gDict[key].text.split('<>')
         if cellType=="Clue":
-            opBox.clue = self.myWrap(gDict[key].text)
+            if parsedMediaType == 'Img':
+                opBox.mediaType = 1
+                opBox.mediaFName = parsedMediaFName
+            elif parsedMediaType == 'Aud':
+                opBox.mediaType = 2
+                opBox.mediaFName = parsedMediaFName
+            elif parsedMediaType == 'Vid':
+                opBox.mediaType = 3
+                opBox.mediaFName = parsedMediaFName
+            opBox.clue = self.myWrap(clue)
         else:
-            opBox.response = self.myWrap(gDict[key].text)
+            opBox.response = self.myWrap(clue)
 
     def makeDailyDoubles(self):
         r1 = random.randrange(30)
@@ -342,17 +364,18 @@ class mainWin(wx.Frame):
         self.Layout()
     
     def InitUI(self):
-        menubar = wx.MenuBar()  # Create Menubar object
-        fileMenu = wx.Menu()    # Create Menu opject
-#        qmi = wx.MenuItem(fileMenu, APP_EXIT, '&Quit\tCtrl+Q')
-#        qmi.SetBitmap(wx.Bitmap('exit.png'))
-#        fileMenu.AppendItem(qmi)
-
-        fitem = fileMenu.Append(wx.ID_EXIT, '&Quit', 'Quit Jeopardy')
-        self.Bind(wx.EVT_MENU, self.OnQuit, fitem)
-        
-        menubar.Append(fileMenu, '&File')
-        self.SetMenuBar(menubar)
+    # The noMenu items are commented out to eliminate showing the File Menu
+#noMenu        menubar = wx.MenuBar()  # Create Menubar object
+#noMenu        fileMenu = wx.Menu()    # Create Menu opject
+#noMenu#        qmi = wx.MenuItem(fileMenu, APP_EXIT, '&Quit\tCtrl+Q')
+#noMenu#        qmi.SetBitmap(wx.Bitmap('exit.png'))
+#noMenu#        fileMenu.AppendItem(qmi)
+#noMenu
+#noMenu        fitem = fileMenu.Append(wx.ID_EXIT, '&Quit', 'Quit Jeopardy')
+#noMenu        self.Bind(wx.EVT_MENU, self.OnQuit, fitem)
+#noMenu        
+#noMenu        menubar.Append(fileMenu, '&File')
+#noMenu        self.SetMenuBar(menubar)
 
         self.screenDraw('Single')
         
@@ -400,24 +423,44 @@ class mainWin(wx.Frame):
         tmp = '\n'.join(tmp) 
         return tmp
 
-    def newClue(self, cString='Text'):
-        cSizer = wx.BoxSizer() 
+    def newClue(self, cString='Text', cType='', cFName=''):
         cPanel = wx.Panel(self)
-        cPanel.SetSizer(cSizer)
         
-        if cString.split()[0] == 'Image:':
-            imgName = cString.split()[1]
-            image = wx.Image(imgName, wx.BITMAP_TYPE_ANY).ConvertToBitmap()
-            cButton = wx.BitmapButton(cPanel, bitmap = image)
-        else:
+        print "1",cString
+        print "2",cType
+        print "3",cFName
+        
+        if cType == 1:
+            print "I'm an image"
+            vSizer = wx.GridSizer(1, 2, 2, 2)
+            cPanel.SetSizer(vSizer)
+            img = wx.Image(cFName, wx.BITMAP_TYPE_ANY).ConvertToBitmap()
             cButton = wx.Button(cPanel, label=cString)
+            cButton.SetFont(wx.Font(35, wx.MODERN, wx.NORMAL, wx.BOLD))
+            iButton = wx.BitmapButton(cPanel, bitmap=img)
+        elif cType == 2:
+            # code for audio layout
+            print "Audio!"
+        elif cType == 3:
+            # code for video layout
+            print "Video!"
+        else:
+            cSizer = wx.BoxSizer() 
+            cPanel.SetSizer(cSizer)
+            cButton = wx.Button(cPanel, label=cString)
+            cButton.SetFont(wx.Font(50, wx.MODERN, wx.NORMAL, wx.BOLD))
         #tmpString = self.myWrap(cString)
         #cButton.SetLabel(tmpString)
-        cButton.SetFont(wx.Font(50, wx.MODERN, wx.NORMAL, wx.BOLD))
         cButton.SetForegroundColour('white')
         cButton.SetBackgroundColour('blue')
         cButton.Bind(wx.EVT_BUTTON, self.OnClueButtonClicked)
-        cSizer.Add(cButton, 1, wx.EXPAND)
+
+        if cType == 1:
+            vSizer.Add(cButton, 1, wx.EXPAND)
+            vSizer.Add(iButton, 1, wx.EXPAND)
+        else:
+            cSizer.Add(cButton, 1, wx.EXPAND)
+
         self.currClueButton = cButton
         return cPanel
 
@@ -429,11 +472,12 @@ class mainWin(wx.Frame):
         self.timeCounter = 15
         e.GetEventObject().SetLabel('')
         self.currBox = bName+6
-        if self.boxes[mNum][bName+6].isClicked == False:
-            self.boxes[mNum][bName+6].clicked()
+        tmpBox = self.boxes[mNum][bName+6]
+        if tmpBox.isClicked == False:
+            tmpBox.clicked()
             e.GetEventObject().Disable()
-            self.cPanel = self.newClue(self.boxes[mNum][bName+6].clue)
-            if self.boxes[mNum][bName+6].isDailyDouble:
+            self.cPanel = self.newClue(tmpBox.clue, tmpBox.mediaType, tmpBox.mediaFName)
+            if tmpBox.isDailyDouble:
                 print 'Daily Double Selected', self.currMode
                 self.currMode = 'Clue'
                 self.cPanel = self.newClue('Daily Double')
@@ -441,13 +485,12 @@ class mainWin(wx.Frame):
             else: 
                 self.screenDraw('Clue')
                 #ser.write('L')  # Unlock Arduino controller
-                print 'XXXX - Serial Write: L'
+#DEBUG                print 'XXXX - Serial Write: L'
                 #self.serialTimer.Start(serDelay)
                 #self.serialTimer.Start()
                 self.restartSerial('L')
-            #print "Clue: ", self.boxes[mNum][bName+6].clue
-            print "foo bar"
-            print "Response: ", self.boxes[mNum][bName+6].response
+            #print "Clue: ", tmpBox.clue
+            print "Response: ", tmpBox.response, "\n"
         
     def OnClueButtonClicked(self, e):
         tic = dt.datetime.now()
@@ -485,7 +528,7 @@ class mainWin(wx.Frame):
                     self.currMode = 'Clue'
                     self.timer.Stop()
                     self.restartSerial('R') # Restart the Serial Port
-                    print "restarting Serial Port 'R'"
+#DEBUG                    print "restarting Serial Port 'R'"
                     time.sleep(.05)
                     self.restartSerial('L') # Unlock the clickers; enable clickers
                     print "Unlocking clickers"
@@ -525,7 +568,7 @@ class mainWin(wx.Frame):
         mNum = self.mode(self.gameMode)
         clueText = self.boxes[mNum][self.currBox].clue
         self.serialTimer.Stop()
-        print "XXXX - In On Clue Clicker"
+#DEBUG        print "XXXX - In On Clue Clicker"
         if self.currMode == 'Response':
           # This code should never happen
             print "This should never happen:(OnClueClickerClicked) Clicker should never do anything if the response is visible" 
@@ -575,7 +618,7 @@ class mainWin(wx.Frame):
         self.serialTimer.Stop()
         ser.write('C')
         points = int(self.boxes[mNum][self.currBox].value)
-        print "XXXX - Current team: ", self.currTeam, points
+#DEBUG        print "XXXX - Current team: ", self.currTeam, points
         self.teams[self.currTeam].updateScore(points)
         self.currMode = 'Response'
         self.cPanel = self.newClue(self.boxes[mNum][self.currBox].response)
@@ -589,7 +632,7 @@ class mainWin(wx.Frame):
         self.serialTimer.Stop()
         #ser.write('W')
         points = int(self.boxes[mNum][self.currBox].value)
-        print "XXXX - Current team: ", self.currTeam, -1*points
+#DEBUG        print "XXXX - Current team: ", self.currTeam, -1*points
         self.teams[self.currTeam].updateScore(-1*points)
         self.currMode = 'Clue'
         self.cPanel = self.newClue(self.boxes[mNum][self.currBox].clue)
@@ -672,7 +715,7 @@ class mainWin(wx.Frame):
         self.boxes[mNum][self.currBox].value = wager
 
     def setCurrTeam(self, serRead):
-        print 'XXXX - Serial Read:', serRead, serRead == 'Mice'
+#DEBUG        print 'XXXX - Serial Read:', serRead, serRead == 'Mice'
 
         if serRead == 'Mice':
             self.currTeam = 0
@@ -683,14 +726,16 @@ class mainWin(wx.Frame):
 
 def main():
     app = wx.App()
-    mainWin(None)
+#    mainWindow= wx.Frame(None, -1, 'OzaPardy', style =  wx.MAXIMIZE_BOX | wx.RESIZE_BORDER | wx.CAPTION | wx.CLOSE_BOX)
+    #mainWin(None)
+    mainWin(None, title='OzaPardy', size=(1600, 900), style=wx.MAXIMIZE_BOX | wx.RESIZE_BORDER | wx.CAPTION |  wx.CLOSE_BOX, name='Noza')
     app.MainLoop()
 
 if __name__ == '__main__':
     main()
 
 '''
-mainWindow= wx.Frame(None, -1, 'Jeopardy', style =  wx.MINIMIZE_BOX | wx.MAXIMIZE_BOX | wx.RESIZE_BORDER 
+mainWindow= wx.Frame(None, -1, 'OzaPardy', style =  wx.MINIMIZE_BOX | wx.MAXIMIZE_BOX | wx.RESIZE_BORDER 
     | wx.SYSTEM_MENU | wx.CAPTION |     wx.CLOSE_BOX)
 mainWindow.Centre()
 mainWindow.Show(True)
