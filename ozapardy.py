@@ -306,7 +306,7 @@ class mainWin(wx.Frame):
     self.boxes[1][r2+6].isDailyDouble = True
     self.boxes[1][r3+6].isDailyDouble = True
 
-    print 'DD', r1, r2, r3
+#DEBUG    print 'DD', r1, r2, r3
 
 
   def screenDraw(self, modeType):
@@ -732,18 +732,13 @@ class mainWin(wx.Frame):
 
     # Handle coloring of the Men/Mice Title bars based on who clicked 
     # and/or who owns the board
-    print "currMode:", self.currMode
-    print "currTeam:", self.currTeam
-    print "lastTeam:", self.lastCorrectTeam
     if (self.currMode == 'Klok' and self.currTeam == 0) or (self.currMode != 'Klok' and self.lastCorrectTeam == 0):
-      print "setting mice"
       miceTitle.SetForegroundColour('darkblue')
       menTitle.SetForegroundColour('darkgrey')
       menTitle.SetFont(bigNormal)
     #else:
     #  miceTitle.SetForegroundColour('darkgrey')
     if (self.currMode == 'Klok' and self.currTeam == 1) or (self.currMode != 'Klok' and self.lastCorrectTeam == 1):
-      print "setting men"
       menTitle.SetForegroundColour('darkblue')
       miceTitle.SetForegroundColour('darkgrey')
       miceTitle.SetFont(bigNormal)
@@ -781,10 +776,10 @@ class mainWin(wx.Frame):
 
     if serRead == 'Mice':
       self.currTeam = 0
-      print "currTeam now Mice", self.currTeam
+#DEBUG      print "currTeam now Mice", self.currTeam
     else:
       self.currTeam = 1
-      print "currTeam now Men", self.currTeam
+#DEBUG      print "currTeam now Men", self.currTeam
 
 def main():
   app = wx.App()
