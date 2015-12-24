@@ -3,7 +3,7 @@ OzaPardy
 Oza Family Jeopardy Game for Annual Holiday Party
 
 This program simply runs by typing (b/c the file is an executable): 
-  ozapardy.py
+  ozapardy.py  or python ozapardy.py
   
 
 Hardware Instructions:
@@ -79,5 +79,5 @@ Special Notes:
       The delimiters are mandated to be '<>', as shown in the notes above
 
   Example Image File Entry:
-    Img<>picOfNick.png<>This joker is known for his JOSN emails
+    Img<>picOfNick.png<>This man is known for his JOSN emails
 

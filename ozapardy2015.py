@@ -5,8 +5,11 @@ Program: OzaPardy.py (originally named Jeopardy.py)
 Author:  Norm Oza, Nick Oza, Neal Oza
 Date:  Started Dec 16, 2012
 
+Started: Dec 16, 2012
 Dec 24th 2013:  Fixed bugs to actually make it work.
+Dec 23rd 2014:  Add in comments and clear up code for media ability
 '''
+
 import gdata.docs
 import gdata.docs.service
 import gdata.spreadsheet.service
@@ -14,6 +17,7 @@ import re, os
 import time
 import datetime as dt
 import serial
+import sys
 from math import *
 
 import wx
@@ -26,14 +30,29 @@ import random
 import Image
 #APP_EXIT = 1
 
-ARDUINO = False  # set this to True if you want to run with arduino/buttons
+if len(sys.argv) > 1:
+  x = str(sys.argv)
+  if '-a' in x:
+    print 'Set program in debug mode without Arduino'
+    ARDUINO = False
+  if '-h' in x:
+    print ("OzaPardy [-h] [-a] [-s] [-d] [-f]")
+    exit()
+  if '-s' in x:
+    SINGLE = True
+  if '-d' in x:
+    DOUBLE = True
+  if '-f' in x:
+    FINAL = True
+else:
+  ARDUINO = False  # set this to True if you want to run with arduino/buttons
 
 usbport = '/dev/ttyACM0'
 if ARDUINO: ser = serial.Serial(usbport, 9600, timeout=0.10)
 ID_TIMER = 2000
 ID_TIMER2 = 2001
 serDelay = 100
-countdownDelay = 1000
+countdownDelay = 1000  # in ms?
 mediaDir = 'media/'
 #print ser
 
@@ -93,6 +112,10 @@ class mainWin(wx.Frame):
     self.lastCorrectTeam = self.currTeam
 
     self.boxId = [''] * 30
+    
+    # Make empty gameplay boxes for single jeopardy (sBoxes)
+    # Make empty gameplay boxes for double jeopardy (dBoxes)
+    # Make empty gameplay boxes for final jeopardy (fBoxes)
 
     sBoxes = [""] * 6
     for ii in range(30): 
@@ -215,7 +238,7 @@ class mainWin(wx.Frame):
     gd_client = gdata.spreadsheet.service.SpreadsheetsService()
     gd_client.email = username
     gd_client.password = passwd
-    gd_client.source = 'OzaPardy.py'
+    gd_client.source = 'ozapardy2015.py'
     gd_client.ProgrammaticLogin()
 
     q = gdata.spreadsheet.service.DocumentQuery()
@@ -246,7 +269,7 @@ class mainWin(wx.Frame):
     gd_client = gdata.spreadsheet.service.SpreadsheetsService()
     gd_client.email = username
     gd_client.password = passwd
-    gd_client.source = 'OzaPardy.py'
+    gd_client.source = 'ozapardy2015.py'
     gd_client.ProgrammaticLogin()
 
     q = gdata.spreadsheet.service.DocumentQuery()
@@ -271,7 +294,7 @@ class mainWin(wx.Frame):
         if rowNum == 2:
           self.FinalBox[1].response = self.myWrap(row.custom['cat1'].text)
 
-
+  # opBox is OzaPardyBox
   def parseOzaPardyBox(self, opBox, key, gDict):
     [cellType, cellVal] = gDict['tiles'].text.split()
     opBox.value = cellVal
@@ -787,20 +810,10 @@ def main():
 #    wx.RESIZE_BORDER | wx.CAPTION | wx.CLOSE_BOX)
   #mainWin(None)
   mainWin(None, title='OzaPardy', size=(1600, 900),
-    style=wx.MAXIMIZE_BOX | wx.RESIZE_BORDER | wx.CAPTION |
-      wx.CLOSE_BOX, name='Noza')
+    style=wx.MAXIMIZE_BOX | wx.RESIZE_BORDER | wx.CAPTION | wx.CLOSE_BOX,
+    name='Noza')
   app.MainLoop()
 
 if __name__ == '__main__':
   main()
-
-'''
-mainWindow= wx.Frame(None, -1, 'OzaPardy', style =  wx.MINIMIZE_BOX |
-  wx.MAXIMIZE_BOX | wx.RESIZE_BORDER 
-  | wx.SYSTEM_MENU | wx.CAPTION |   wx.CLOSE_BOX)
-mainWindow.Centre()
-mainWindow.Show(True)
-
-app.MainLoop()
-'''
 
