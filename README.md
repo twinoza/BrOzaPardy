@@ -3,7 +3,8 @@ OzaPardy
 Oza Family Jeopardy Game for Annual Holiday Party
 
 This program simply runs by typing (b/c the file is an executable): 
-  ozapardy.py  or python ozapardy.py
+     ozapardy.py cmozafam Jeopardy4us
+  or python ozapardy.py cmozafam Jeopardy4us
   
 
 Hardware Instructions:

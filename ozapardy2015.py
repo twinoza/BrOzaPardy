@@ -10,14 +10,15 @@ Dec 24th 2013:  Fixed bugs to actually make it work.
 Dec 23rd 2014:  Add in comments and clear up code for media ability
 '''
 
-import gdata.docs
-import gdata.docs.service
-import gdata.spreadsheet.service
+import sys
+#import gdata.docs
+#import gdata.docs.service
+#import gdata.spreadsheet.service
+import gspread
 import re, os
 import time
 import datetime as dt
 import serial
-import sys
 from math import *
 
 import wx
@@ -29,14 +30,53 @@ import textwrap
 import random
 import Image
 #APP_EXIT = 1
+from numpy import loadtxt
 
-if len(sys.argv) > 1:
+import argparse
+from oauth2client.client import OAuth2WebServerFlow, SignedJwtAssertionCredentials
+from oauth2client import tools
+from oauth2client.tools import run_flow
+from oauth2client.file import Storage
+import json
+
+
+def authorizeOzaPardy():
+  print("Authorizing OzaPardy Access")
+#  CLIENT_ID = '531072861739-j5v60k5ggpk9h758fm1v6rhktpqdja38.apps.googleusercontent.com'
+#  CLIENT_SECRET = 'Fg43Hk6zXw7_aV8_aRGzeXhK'
+#
+#  flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
+#
+#  flow = OAuth2WebServerFlow(
+#      client_id = CLIENT_ID,
+#      client_secret = CLIENT_SECRET,
+#      scope = 'https://spreadsheets.google.com/feeds https://docs.google.com/feeds',
+#      redirect_uri = 'http://example.com/auth_return'
+#      )
+#
+#  storage = Storage('creds.data')
+#  credentials = run_flow(flow, storage, flags)
+  json_key = json.load(open('ozaPardy-9bd0550357c8.json'))
+  scope = ['https://spreadsheets.google.com/feeds']
+  credentials = SignedJwtAssertionCredentials(
+    json_key['client_email'],
+    json_key['private_key'],
+    scope)
+  gc = gspread.authorize(credentials)
+  print "access_token: %s" % credentials.access_token
+  return(gc)
+
+cmd = "OzaPardy cmozafam Jeopardy4us [-h] [-a] [-s] [-d] [-f]"
+if len(sys.argv) < 1:
+  print (cmd)
+  exit()
+if len(sys.argv) > 3:
   x = str(sys.argv)
   if '-a' in x:
     print 'Set program in debug mode without Arduino'
     ARDUINO = False
   if '-h' in x:
-    print ("OzaPardy [-h] [-a] [-s] [-d] [-f]")
+    print (cmd)
     exit()
   if '-s' in x:
     SINGLE = True
@@ -45,7 +85,7 @@ if len(sys.argv) > 1:
   if '-f' in x:
     FINAL = True
 else:
-  ARDUINO = False  # set this to True if you want to run with arduino/buttons
+  ARDUINO = True  # set this to True if you want to run with arduino/buttons
 
 usbport = '/dev/ttyACM0'
 if ARDUINO: ser = serial.Serial(usbport, 9600, timeout=0.10)
@@ -59,14 +99,14 @@ mediaDir = 'media/'
 class ozaPardyBox(object):
   def __init__(self, clue=None, response=None, value=None, 
     isClicked=False, isDailyDouble=False, isAnswered=False,
-    miceAns=0, menAns=0, mediaType=0, mediaFName=''):
+    MiceAns=0, menAns=0, mediaType=0, mediaFName=''):
     self.clue = clue
     self.response = response
     self.value = value
     self.isClicked = isClicked
     self.isDailyDouble = isDailyDouble
     self.isAnswered = isAnswered
-    self.miceAns = miceAns
+    self.MiceAns = MiceAns
     self.menAns = menAns
 
     # 0 = Not Media, 1 = Image, 2 = Audio, 3 = Video 
@@ -81,15 +121,15 @@ class ozaPardyBox(object):
     if team == 'men':
       self.menAns = isCorrect
       self.isAnswered=True
-    elif team == 'mice':
-      self.miceAns = isCorrect
+    elif team == 'Mice':
+      self.MiceAns = isCorrect
       self.isAnswered=True
     else:
       print("Team isn't valid: No score changed")
 
 
 class team(object):
-  def __init__(self, name="Men", score=0):
+  def __init__(self, name, score=0):
     self.name = name
     self.score = score
 
@@ -141,7 +181,7 @@ class mainWin(wx.Frame):
     self.currClueButton = wx.Button(self)
     self.timeCounter = 15
 
-    [self.micePanel, self.bPanel, self.menPanel] = self.updateHeader()
+    [self.MicePanel, self.bPanel, self.menPanel] = self.updateHeader()
 #    doc_name = raw_input('What is name of OzaPardy sheet? ',\
 #   Sheet must be shared with cmozafam@gmail.com...\nType in Sheetname: ')
     doc_name="OzaPardy"
@@ -173,7 +213,7 @@ class mainWin(wx.Frame):
     self.serialTimer.Stop()
     msg = ser.readline();
     if (msg):
-#DEBUG      print "XXXX - Serial Input: " + msg
+      print "XXXX - Serial Input: " + msg
       self.setCurrTeam(msg.strip())
 #DEBUG      print "XXXX - Current Team #: ", self.currTeam
       self.OnClueClickerClicked()
@@ -214,7 +254,8 @@ class mainWin(wx.Frame):
     if modeType in self.modes:
       return self.modes.index(modeType)
     else: return 0
-
+    
+  # This routine checkes if all boxes have been clicked & so the game is done.
   def areWeDoneYet(self):
     mNum = self.mode(self.gameMode)
     done = True
@@ -228,82 +269,110 @@ class mainWin(wx.Frame):
   # gameType = 1: Double Jeopardy
   # gameType = 2: Final Jeopardy
   def getJeopardyData(self, gameType=0, doc_name="OzaPardy"):
-    username    = 'cmozafam@gmail.com'
-    passwd      = 'Jeopardy4us'
+    #username    = 'cmozafam@gmail.com'
+    #passwd      = 'Jeopardy4us'
 #    doc_name = raw_input('What is name of OzaPardy sheet? '+
 #       Sheet must be shared with cmozafam@gmail.com...\nType in Sheetname: ')
-    
     print "Start getJeopardyData"
     # Connect to Google
-    gd_client = gdata.spreadsheet.service.SpreadsheetsService()
-    gd_client.email = username
-    gd_client.password = passwd
-    gd_client.source = 'ozapardy2015.py'
-    gd_client.ProgrammaticLogin()
+#    gd_client = gdata.spreadsheet.service.SpreadsheetsService()
+#    gd_client.email = username
+#    gd_client.password = passwd
+#    gd_client.source = 'ozapardy2015.py'
+#    gd_client.ProgrammaticLogin()
+#
+#    q = gdata.spreadsheet.service.DocumentQuery()
+#    q['title'] = doc_name
+#    q['title-exact'] = 'true'
+#    feed = gd_client.GetSpreadsheetsFeed(query=q)
+##    print feed
+#    spreadsheet_id = feed.entry[0].id.text.rsplit('/',1)[1]
+#    feed = gd_client.GetWorksheetsFeed(spreadsheet_id)
+#    worksheet_id = feed.entry[gameType].id.text.rsplit('/',1)[1]
+#
+#    rows = gd_client.GetListFeed(spreadsheet_id, worksheet_id).entry
+#    gc = gspread.login(username, passwd)
 
-    q = gdata.spreadsheet.service.DocumentQuery()
-    q['title'] = doc_name
-    q['title-exact'] = 'true'
-    feed = gd_client.GetSpreadsheetsFeed(query=q)
-#    print feed
-    spreadsheet_id = feed.entry[0].id.text.rsplit('/',1)[1]
-    feed = gd_client.GetWorksheetsFeed(spreadsheet_id)
-    worksheet_id = feed.entry[gameType].id.text.rsplit('/',1)[1]
+#    gc = authorizeOzaPardy()
+#    jeopardySpreadsheet = gc.open(doc_name)
+#
+#    sSht = jeopardySpreadsheet.worksheet("single")
+#    dSht = jeopardySpreadsheet.worksheet("double")
+#    fSht  = jeopardySpreadsheet.worksheet("final")
+#
+#    # The following three arrays set the initial data sets
+#    singleData = sSht.get_all_values()
+#    doubleData = dSht.get_all_values()
+#    finalData  = fSht.get_all_values()
 
-    rows = gd_client.GetListFeed(spreadsheet_id, worksheet_id).entry
+    if gameType == 0:
+      data = loadtxt('OzaPardy - Single.tsv', dtype='S', delimiter='\t', skiprows=1)
+      print('Loaded Single Jeopardy')
+    elif gameType == 1:
+      data = loadtxt('OzaPardy - Double.tsv', dtype='S', delimiter='\t', skiprows=1)
+      print('Loaded Double Jeopardy')
+    else:
+      print ('Error in getJeopardyData: Invalid gameType')
+      return()
 
-    for rowNum, row in enumerate(rows):
-      for colNum, key in enumerate(row.custom):
+    for rowNum, row in enumerate(data):
+      for colNum, boxVal in enumerate(row):
         boxNum = int((ceil(rowNum/2.)*6) + (colNum-1))
         if colNum != 0:
           if rowNum == 0:   # Fill in category Names
-            self.boxes[gameType][boxNum] = row.custom[key].text
+            self.boxes[gameType][boxNum] = boxVal #row[key].text
           else:         # Fill in Clue/Response boxes
-            self.parseOzaPardyBox(self.boxes[gameType][boxNum], key, row.custom)
+            self.parseOzaPardyBox(self.boxes[gameType][boxNum], boxVal, row[0])
 
   def getFinalJeopardy(self, doc_name = 'OzaPardy'):
-    username    = 'cmozafam@gmail.com'
-    passwd      = 'Jeopardy4us'
+#    username    = 'cmozafam@gmail.com'
+#    passwd      = 'Jeopardy4us'
+#
+#    print "Start getFinalJeopardy"
+#    gd_client = gdata.spreadsheet.service.SpreadsheetsService()
+#    gd_client.email = username
+#    gd_client.password = passwd
+#    gd_client.source = 'ozapardy2015.py'
+#    gd_client.ProgrammaticLogin()
+#
+#    q = gdata.spreadsheet.service.DocumentQuery()
+#    q['title'] = doc_name
+#    q['title-exact'] = 'true'
+#    feed = gd_client.GetSpreadsheetsFeed(query=q)
+#    spreadsheet_id = feed.entry[0].id.text.rsplit('/',1)[1]
+#    feed = gd_client.GetWorksheetsFeed(spreadsheet_id)
+#    worksheet_id = feed.entry[2].id.text.rsplit('/',1)[1]
+##    print worksheet_id
 
-    print "Start getFinalJeopardy"
-    gd_client = gdata.spreadsheet.service.SpreadsheetsService()
-    gd_client.email = username
-    gd_client.password = passwd
-    gd_client.source = 'ozapardy2015.py'
-    gd_client.ProgrammaticLogin()
-
-    q = gdata.spreadsheet.service.DocumentQuery()
-    q['title'] = doc_name
-    q['title-exact'] = 'true'
-    feed = gd_client.GetSpreadsheetsFeed(query=q)
-    spreadsheet_id = feed.entry[0].id.text.rsplit('/',1)[1]
-    feed = gd_client.GetWorksheetsFeed(spreadsheet_id)
-    worksheet_id = feed.entry[2].id.text.rsplit('/',1)[1]
-#    print worksheet_id
-
-    rows = gd_client.GetListFeed(spreadsheet_id, worksheet_id).entry
+    finalData  = loadtxt('OzaPardy - Final.tsv', dtype='S', delimiter='\t', skiprows=1)
+#    rows = gd_client.GetListFeed(spreadsheet_id, worksheet_id).entry
 
     self.FinalBox[1].value = 1
-    for rowNum, row in enumerate(rows):
-      for colNum, key in enumerate(row.custom):
+    for rowNum, row in enumerate(finalData):
+      for colNum, boxVal in enumerate(row):
         boxNum = int(ceil(rowNum/2.) + (colNum-1))
         if rowNum == 0:
-          self.FinalBox[0] = row.custom['cat1'].text
+          self.FinalBox[0] = boxVal
         if rowNum == 1:
-          self.FinalBox[1].clue = self.myWrap(row.custom['cat1'].text)
+          self.FinalBox[1].clue = self.myWrap(boxVal)
         if rowNum == 2:
-          self.FinalBox[1].response = self.myWrap(row.custom['cat1'].text)
+          self.FinalBox[1].response = self.myWrap(boxVal)
 
   # opBox is OzaPardyBox
-  def parseOzaPardyBox(self, opBox, key, gDict):
-    [cellType, cellVal] = gDict['tiles'].text.split()
+  # OLD def parseOzaPardyBox(self, opBox, key, gDict):
+  # cellData is the first column of the spreadsheet which determines whether
+  #     the row is a clue or a response and the point value associated with 
+  #     that row.
+  def parseOzaPardyBox(self, opBox, boxVal, cellData):
+    #[cellType, cellVal] = gDict['tiles'].text.split()
+    [cellType, cellVal] = cellData.split()
     opBox.value = cellVal
 
     parsedMediaType = ''
-    clue = gDict[key].text
+    clue = boxVal
 
-    if '<>' in gDict[key].text:
-      parsedMediaType, parsedMediaFName, clue = gDict[key].text.split('<>')
+    if '<>' in boxVal:
+      parsedMediaType, parsedMediaFName, clue = boxVal.split('<>')
     if cellType=="Clue":
       if parsedMediaType == 'Img':
         opBox.mediaType = 1
@@ -333,7 +402,7 @@ class mainWin(wx.Frame):
 
 
   def screenDraw(self, modeType):
-#    self.micePanel.Hide()
+#    self.MicePanel.Hide()
 #    self.bPanel.Hide()
 #    self.menPanel.Hide()
     self.serialTimer.Stop()
@@ -347,9 +416,9 @@ class mainWin(wx.Frame):
     vbox = wx.BoxSizer(wx.VERTICAL)
     hSizer = wx.BoxSizer(wx.HORIZONTAL)
 
-    [self.micePanel, self.bPanel, self.menPanel] = self.updateHeader()
+    [self.MicePanel, self.bPanel, self.menPanel] = self.updateHeader()
 
-    hSizer.AddMany([(self.micePanel, 1, wx.EXPAND),
+    hSizer.AddMany([(self.MicePanel, 1, wx.EXPAND),
                     (self.bPanel,  1, wx.EXPAND),
                     (self.menPanel,  1, wx.EXPAND)])
 
@@ -716,21 +785,21 @@ class mainWin(wx.Frame):
     bigItalic = wx.Font(30, wx.MODERN, wx.ITALIC, wx.BOLD)
     biggerItalic = wx.Font(50, wx.MODERN, wx.ITALIC, wx.BOLD)
 
-    micePanel = wx.Panel(self)
-    miceTitle = wx.StaticBox(micePanel, label=self.teams[0].name,
+    MicePanel = wx.Panel(self)
+    MiceTitle = wx.StaticBox(MicePanel, label=self.teams[0].name,
       pos=(5,5), size=(550,210))
-    miceTitle.SetFont(bigItalic)
+    MiceTitle.SetFont(bigItalic)
 
-    miceScoreDisp = wx.StaticText(micePanel, 1, pos=(20,80))
-    miceScoreDisp.SetLabel('$' + str(self.teams[0].score))
-    miceScoreDisp.SetFont(bigNormal)
-    miceScoreDisp.SetForegroundColour('blue')
-    miceWagerLabel = wx.StaticText(micePanel, 1, pos=(320,60))
-    miceWagerLabel.SetLabel('Wager')
-    miceWagerLabel.SetFont(smallNormal)
-    miceWager = wx.TextCtrl(micePanel, 1, pos=(220,90), size=(200,50))
-    miceWager.Bind(wx.EVT_TEXT, self.updateMiceWager)
-    miceWager.SetFont(bigNormal)
+    MiceScoreDisp = wx.StaticText(MicePanel, 1, pos=(20,80))
+    MiceScoreDisp.SetLabel('$' + str(self.teams[0].score))
+    MiceScoreDisp.SetFont(bigNormal)
+    MiceScoreDisp.SetForegroundColour('blue')
+    MiceWagerLabel = wx.StaticText(MicePanel, 1, pos=(320,60))
+    MiceWagerLabel.SetLabel('Wager')
+    MiceWagerLabel.SetFont(smallNormal)
+    MiceWager = wx.TextCtrl(MicePanel, 1, pos=(220,90), size=(200,50))
+    MiceWager.Bind(wx.EVT_TEXT, self.updateMiceWager)
+    MiceWager.SetFont(bigNormal)
     
     bPanel = wx.Panel(self)
     if self.currMode != 'Klok':
@@ -756,15 +825,15 @@ class mainWin(wx.Frame):
     # Handle coloring of the Men/Mice Title bars based on who clicked 
     # and/or who owns the board
     if (self.currMode == 'Klok' and self.currTeam == 0) or (self.currMode != 'Klok' and self.lastCorrectTeam == 0):
-      miceTitle.SetForegroundColour('darkblue')
+      MiceTitle.SetForegroundColour('darkblue')
       menTitle.SetForegroundColour('darkgrey')
       menTitle.SetFont(bigNormal)
     #else:
-    #  miceTitle.SetForegroundColour('darkgrey')
+    #  MiceTitle.SetForegroundColour('darkgrey')
     if (self.currMode == 'Klok' and self.currTeam == 1) or (self.currMode != 'Klok' and self.lastCorrectTeam == 1):
       menTitle.SetForegroundColour('darkblue')
-      miceTitle.SetForegroundColour('darkgrey')
-      miceTitle.SetFont(bigNormal)
+      MiceTitle.SetForegroundColour('darkgrey')
+      MiceTitle.SetFont(bigNormal)
     #else:
     #  menTitle.SetForegroundColour('darkgrey')
     menScoreDisp = wx.StaticText(menPanel, 1, pos=(20,80))
@@ -778,7 +847,7 @@ class mainWin(wx.Frame):
     menWager.Bind(wx.EVT_TEXT, self.updateMenWager)
     menWager.SetFont(bigNormal)
 
-    return [micePanel, bPanel, menPanel]
+    return [MicePanel, bPanel, menPanel]
 
   def updateMiceWager(self, e):
     wager = e.GetEventObject().GetValue()
@@ -809,6 +878,7 @@ def main():
 #  mainWindow= wx.Frame(None, -1, 'OzaPardy', style =  wx.MAXIMIZE_BOX |
 #    wx.RESIZE_BORDER | wx.CAPTION | wx.CLOSE_BOX)
   #mainWin(None)
+  print("Authorization access required")
   mainWin(None, title='OzaPardy', size=(1600, 900),
     style=wx.MAXIMIZE_BOX | wx.RESIZE_BORDER | wx.CAPTION | wx.CLOSE_BOX,
     name='Noza')

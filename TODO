@@ -7,3 +7,11 @@
 -Two line titles for categories
 -Music for final
 -Final Jeopardy Scoring and Answer
+-Splash screen for testing buttons
+-Countdown timer to start of game on Splash screen
+-Three teams
+-Modify points (override)
+-Shared directory for uploading music and video
+-Get OAuth2 working
+-Ability to rename teams
+-Change display so Lower score team starts double jeopardy
