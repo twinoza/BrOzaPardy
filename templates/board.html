@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block head %}
+  <script type="text/javascript">
+    $scope.btnText = 'Submit';
+    $scope.loading = false;
+
+    $http.post('/start', {'url': userInput}).
+      success(function(results) {
+        $log.log(results);
+        getWordCount(results);
+        $scope.wordcounts = null;
+        $scope.loading = true;
+        $scope.btnText = 'Loading...';
+      }).
+      error(function(error) {
+        $log.log(error);
+    });
+  </script>
+    {{ super() }}
+    <style> div{ margin-bottom: 5%; text-align: center; } </style> 
+{% endblock %}
+
+{% block content %}
+
+  <div style="text-align:center">
+    <span>  <!-- This will write the categories to the webpage -->
+      {% for cat in cats %}
+        {% set myId = "cat"~loop.index %}
+        {% set myHref = "/" ~ myId %}
+        <a href={{myHref}}><button class="cat"; id={{myId}} %}>{{cat}}</button></a>
+      {% endfor %}
+    </span>
+  </div>
+  <br>
+  <div>
+  {%raw%}<button class="btn" ng-disabled="loading" id="thisBtn">{{btnText}}</button>{%endraw%}
+  </div>
+{% endblock %}

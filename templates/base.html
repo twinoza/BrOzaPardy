@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% block head %}
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/ozapardy.css')}}">
+    <link rel="shortcut icon" href="{{url_for('static', filename='img/favicon.ico')}}">
+    <title>{% block title %}{% endblock %} - OzaPardy</title>
+    {% endblock %}
+</head>
+<body>
+{% if timer is undefined() %}
+  {% set timer = "0:00" %}
+{% endif %}
+<div style="background-color:darkblue; text-align:center; margin:0px; ">
+  <a href="/">
+   <img id="t0"; src="{{url_for('static', filename='img/gear.gif')}}" alt="Init Game" style="width:30px;height:30px;">
+  </a>
+  <label style="margin-left: 5%">TIMER : </label><label id="timer">{{ timer }}</label>
+  <a href="/newTeamname"><button id="t1">Team 1:</button><label id="s1">00000</label></a>
+  <a href="/newTeamname"><button id="t2">Team 2:</button> <label id="s2">00000</label></a>
+  <a href="/newTeamname"><button id="t3">Team 3:</button> <label id="s3">00000</label></a>
+  <a href="/newTeamname"><button id="t4">Team 4:</button> <label id="s4">00000</label></a>
+  <hr>
+</div>
+
+<div id="content">{% block content %}{% endblock %}</div>
+<div id="footer">
+    {% block footer %}
+      <label style="color:yellow; font-size: 0.7em; text-align: left;">Created by Avinash K, Shlok S, Neal N & Nirmal C</label>
+    {% endblock %}
+</div>
+</body>
+
+
+
+
+
+<!-- <head>
+    <meta charset="utf-8"/>
+    <title>OzaPardy</title>
+    <!-- CSS and JS would go here -->
+<!--
+     <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/ozapardy.css')}}">
+    <link rel="shortcut icon" href="{{url_for('static', filename='img/favicon.ico')}}">
+</head>
+
+<body>
+<!-- Init Menu & Team Scores -->
+
+<!-- <iframe src="/scorebd"></iframe>
+
+<div> </div>
+<div><a href="/idx/board"><button id="btn2">Single OzaPardy</button></a></div>
+<div><a href="/idx/board/d"><button id="btn3">Double OzaPardy</button></a></div>
+<div><a href="/idx/clue/f"><button id="btn4">Final OzaPardy</button></a></div>
+<p style="color:white;"> Please display the number: {{number}}</p>
+
+</body> -->
+</html>
