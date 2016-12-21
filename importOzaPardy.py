@@ -25,10 +25,9 @@ def getJeopardyData(boxes, gameType=0, doc_name="OzaPardy"):
                     ###boxes[gameType][boxNum] = boxVal #row[key].text
                     print(boxVal)
                 else:         # Fill in Clue/Response boxes
-                    parseOzaPardyBox(self.boxes[gameType][boxNum], boxVal, row[0])
+                    parseOzaPardyBox(boxes[gameType][boxNum], boxVal, row[0])
 
 # opBox is OzaPardyBox
-# OLD def parseOzaPardyBox(self, opBox, key, gDict):
 # cellData is the first column of the spreadsheet which determines whether
 #     the row is a clue or a response and the point value associated with 
 #     that row.
