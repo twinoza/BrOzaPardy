@@ -1,5 +1,6 @@
 from numpy import loadtxt
 from math import ceil
+import opHelperFns as ophf
 
 #Pass in Boxes to be populated
 def getJeopardyData(boxes, gameType=0, doc_name="OzaPardy"):
@@ -51,6 +52,6 @@ def parseOzaPardyBox(opBox, boxVal, cellData):
         elif parsedMediaType == 'Vid':
             opBox.mediaType = 3
             opBox.mediaFName = mediaDir + parsedMediaFName
-        opBox.clue = self.myWrap(clue)
+        opBox.clue = ophf.myWrap(clue)
     else:
-        opBox.response = self.myWrap(clue)
+        opBox.response = ophf.myWrap(clue)

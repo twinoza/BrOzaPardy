@@ -1,6 +1,7 @@
 from flask import Flask, render_template
 import logging
 import ozaPardyClasses as opc
+import getOzaPardy
 
 app = Flask(__name__)
 temp = 0
