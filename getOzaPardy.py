@@ -4,6 +4,12 @@ import opHelperFns as ophf
 
 #Pass in Boxes to be populated
 def getJeopardyData(boxes, gameType=0, doc_name="OzaPardy"):
+    '''Gets the OzaPardy data from a TSV file and stores it into a list of
+    OzaPardyBox objects
+
+    Inputs: 
+
+    '''
     print("Start getJeopardyData")
 
     if gameType == 0:
