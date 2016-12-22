@@ -2,8 +2,9 @@
 {% block title %}Home{% endblock %}
 
 {% block head %}
-    {{ super() }}
+	{{ super() }}  {# This will permit the parent template 'base.html' to render #}
     <style> div{ margin-bottom: 5%; text-align: center; } </style> 
+	}
 {% endblock %}
 
 {% block content %}

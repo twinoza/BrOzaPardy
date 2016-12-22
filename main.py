@@ -5,6 +5,8 @@ import getOzaPardy
 
 app = Flask(__name__)
 temp = 0
+
+bdVal = 100 # this will be an array later but for now just the same value for all boxes
 # Initialize the boxes for OzaPardy
 
 Team1 = opc.team('Mice', 2500)
@@ -20,6 +22,7 @@ def index():
 
 @app.route('/board/<sd>')
 def drawBoard(sd):
+    global bdVal
     cats = ["This & That", "That&This", "This", "That", "Everything", "Lots & Lots of Nothing Else"]
     gmMulti = 1
     if sd == "d":
