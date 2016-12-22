@@ -1,10 +1,10 @@
+{# this is the child template which will extend the parent "base.html" #}
 {% extends "base.html" %}
 {% block title %}Home{% endblock %}
 
 {% block head %}
 	{{ super() }}  {# This will permit the parent template 'base.html' to render #}
     <style> div{ margin-bottom: 5%; text-align: center; } </style> 
-	}
 {% endblock %}
 
 {% block content %}

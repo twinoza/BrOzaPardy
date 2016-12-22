@@ -22,15 +22,15 @@
         <a href={{myHref}}><button class="cat"; id={{myId}} %}>{{cat}}</button></a>
       {% endfor %}
     </span>
+    <!-- This will create value boxes on screen -->
     <div style="text-align:center">
-    {% for row in [0,1,2,3,4,5] %}
+      {% for row in [0,1,2,3,4] %}
       <span>
         {% set outerloop = loop %}
-        {% for col in [0,1,2,3,4] %}
+        {% for col in [0,1,2,3,4,5] %}
           {% set myId = "clue"~loop.index~outerloop.index %}
           {% set myHref = "/clue" %}
-          {% set displayValue = bdVal %}
-          <a href="#"><button class="gmBox"; onclick="blank({{myId}})"; id={{myId}} %}>{{ displayValue }}</button></a>
+          <a href="#"><button class="gmBox"; onclick="blank({{myId}})"; id={{myId}} %}>{{ bdVal[row][col] }}</button></a>
         {% endfor %}
       </span>
     {% endfor %}
