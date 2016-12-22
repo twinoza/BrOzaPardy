@@ -31,9 +31,14 @@ def drawBoard(sd):
         gmMulti = 2
     return render_template( 'board.html', **locals() )
 
-@app.route('/newTeamname')
-def drawHome():
-    return render_template('newTeamname.html', number = temp)
+@app.route('/getTeamname')
+def getTeamname():
+	teams = Teams
+	return render_template('getTeamname.html' **locals() )
+
+@app.route('/updateTeamname')
+def updateTeamname():
+    return render_template('updateTeamname.html')
 
 if __name__ == '__main__':
     app.run()
