@@ -19,7 +19,11 @@ class ozaPardyBox(object):
 
 
 class team(object):
-    def __init__(self, name, score=0):
+    def __init__(self, teamId, name, score=0):
+        self.id = teamId
         self.name = name
         self.score = score
         #include way to track right and wrong answers
+    
+    def changeName(newName)
+        self.name = newName
