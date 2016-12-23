@@ -17,6 +17,7 @@ import serial
 import time
 
 usbport = '/dev/cu.usbmodem1411'
+ser = serial.Serial(usbport, 9600, timeout=0.1)
 
 question_time = 30.
 question_ans_time = 20.
@@ -53,13 +54,15 @@ def ArduinoQuestionQueryThingFunction():
             question_is_happening = False #kill the question because no one answered
     return
 
+
 def keep_checking_for_answer(timeout1):
-    ser = serial.Serial(usbport, 9600, timeout=0.1)
+    # ser = serial.Serial(usbport, 9600, timeout=0.1)
     start_time = time.time()
     msg = '0'
     while ((time.time() - start_time) < timeout1) and msg=='0':
         ser.write('S')
-        time.sleep(0.050) #50 ms of sleep to allow time to read
+        # time.sleep(0.050) #50 ms of sleep to allow time to read
+        # time.sleep(5)
         msg = ser.read()
     return msg
 
