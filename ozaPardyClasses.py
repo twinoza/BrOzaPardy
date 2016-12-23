@@ -25,5 +25,11 @@ class team(object):
         self.score = score
         #include way to track right and wrong answers
     
-    def changeName(newName)
+    def setName(newName):
         self.name = newName
+
+    def getName():
+        return self.name
+        
+    def getId():
+        return self.id

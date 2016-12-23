@@ -49,7 +49,7 @@ def ArduinoQuestionQueryThingFunction():
                 #NEAL:   set question_is_happening = False
                 #NEAL:elif answered incorrectly:
                 #NEAL:   deduct points from the team
-                print 'hey'
+                print('hey')
         else:
             question_is_happening = False #kill the question because no one answered
     return
