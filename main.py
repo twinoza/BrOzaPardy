@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, request, render_template
 import logging
 import ozaPardyClasses as opc
 import getOzaPardy
@@ -13,11 +13,12 @@ Team3 = opc.team('None', 0000)
 Team4 = opc.team('None', 0000)
 Teams = [Team1, Team2, Team3, Team4]
 
-@app.route('/')
+@app.route('/', methods = ['POST', 'GET'])
 def index():
-    global Teams
     timer = "0:15"
     teams = Teams
+    if request.method =='POST':
+    	teams[clickedTeam].name = newName
     return render_template('index.html', **locals())
 
 @app.route('/board/<sd>')
@@ -34,7 +35,8 @@ def drawBoard(sd):
 @app.route('/getTeamname')
 def getTeamname():
 	teams = Teams
-	return render_template('getTeamname.html' **locals() )
+	btn_id = request.form['submit']
+	return render_template('getTeamname.html', **locals() )
 
 @app.route('/updateTeamname')
 def updateTeamname():
