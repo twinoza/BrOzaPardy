@@ -18,7 +18,7 @@ def index():
     timer = "0:15"
     teams = Teams
     if request.method =='POST':
-    	teams[clickedTeam].name = newName
+    	teams[clickedTeam].name = request.form['#teamname']
     return render_template('index.html', **locals())
 
 @app.route('/board/<sd>')
@@ -32,10 +32,10 @@ def drawBoard(sd):
         gmMulti = 2
     return render_template( 'board.html', **locals() )
 
-@app.route('/getTeamname')
+@app.route('/getTeamname', methods =['POST'])
 def getTeamname():
 	teams = Teams
-	btn_id = request.form['submit']
+#	btn_id = request.form['submit']
 	return render_template('getTeamname.html', **locals() )
 
 @app.route('/updateTeamname')
