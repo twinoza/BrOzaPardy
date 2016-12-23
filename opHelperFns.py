@@ -59,6 +59,7 @@ def keep_checking_for_answer(timeout1):
     msg = '0'
     while ((time.time() - start_time) < timeout1) and msg=='0':
         ser.write('S')
+        time.sleep(0.050) #50 ms of sleep to allow time to read
         msg = ser.read()
     return msg
 
