@@ -13,6 +13,8 @@
 {% endblock %}
 
 {% block content %}
+<p style="color:white">bdval is = {{bdVal}}</p>
+<p style="color:white">col -- row is = {{col}}{{row}} </p>
   <div style="text-align:center">
     <div>  <!-- This will write the categories to the webpage -->
       {% for cat in cats %}
@@ -24,15 +26,15 @@
     <hr />
     <!-- This will create value boxes on screen -->
     <div style="text-align:center">
-      {% for row in [0,1,2,3,4,5] %}
+      {% for row in [0,1,2,3,4] %}
       <span>
         {% set outerloop = loop %}
-        {% for col in [0,1,2,3,4] %}
+        {% for col in [0,1,2,3,4,5] %}
           {% set myId = "clue"~loop.index~outerloop.index %}
-          <a href="/clue/{{loop.index}}{{outerloop.index}}"><button class="gmBox"; name="{{myId}}"; %}>{{ bdVal[col][row] }}</button></a>
+          <a href="/clue/{{loop.index}}{{outerloop.index}}"><button class="gmBox"; name="{{myId}}"; %}>{{ int(gmMulti)*int(bdVal[col][row]) }}</button></a>
         {% endfor %}
       </span>
-    {% endfor %}
+      {% endfor %}
     </div>
   </div>
 {% endblock %}

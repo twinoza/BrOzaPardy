@@ -4,7 +4,7 @@ import logging
 
 app = Flask(__name__)
 
-val = [ [100]*6, [200]*6, [300]*6, [400]*6, [500]*6 ] # Initialize the boxes for OzaPardy
+val = [ [i for i in range(100,600,100)],]*6 # Initialize the boxes for OzaPardy
 
 @app.route('/', methods = ['POST', 'GET'])
 def index():
@@ -22,6 +22,7 @@ def index():
 def drawBoard(sd):
   global val
   bdVal = val
+  print(bdVal)
   teams = g.Teams
   cats = ["This & That", "That&This", "This", "That", "Everything", "Lots & Lots of Nothing Else & even more"]
   gmMulti = 1
@@ -38,13 +39,10 @@ def editTeam():
 
 @app.route('/clue/<cr>')   #  <RC> will be the clue number Row & Col 
 def clue(cr):
-  teams = Teams
-  row = int(int(cr)/10)
-  col = int(int(cr)%10)
-  clueVal=[['']*6]*5
-  cv = "He was the President of USA for last 8 years"
-  clueVal[2][1] = "He was the President of USA for last 8 years"
-  cval = clueVal[col][row]
+  teams = g.Teams
+  col = int(int(cr)/10)
+  row = int(int(cr)%10)
+  cv = "He was the President of USA for last 8 years and these were the last 8 Presidents of USA and Prime Ministers of India"
   return render_template('clue.html', **locals() )
 
 if __name__ == '__main__':

@@ -25,6 +25,7 @@ p      { margin-bottom: 0px }
 
 /* Define the classes here */
 .cat    { width:15vw; height:15%; background-color:darkblue; color:white; font-size:20px; vertical-align:middle; display: inline-block;}
+.clueBox { width:100%; height:91vh; background-color:blue; color:yellow; font-size: 70px; padding:10%;}
 .frmTmName { width:15%; display:inline; }
 .gmBox  { width:15vw; height:15vh; background-color:blue; color:yellow; font-size:40px; }
 .gmBox:visited { color:blue; }
