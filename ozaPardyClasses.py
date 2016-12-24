@@ -25,11 +25,7 @@ class team(object):
         self.score = score
         #include way to track right and wrong answers
     
-<<<<<<< Updated upstream
     def setName(newName):
-=======
-    def changeName(newName):
->>>>>>> Stashed changes
         self.name = newName
 
     def getName():
