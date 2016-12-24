@@ -40,8 +40,10 @@ def getJeopardyData(modeType, docName):
             boxNum = int((ceil(rowNum/2.)*6) + (colNum-1))
             if modeType in ['Single', 'Double'] and colNum != 0:
                 if rowNum == 0:   # Fill in category Names
+                    print(boxNum, tmpBoard[boxNum], boxVal)
                     tmpBoard[boxNum] = boxVal
                 else:         # Fill in Clue/Response boxes in board
+                    print(boxNum, tmpBoard[boxNum].id, boxVal)
                     parseOzaPardyBox(tmpBoard[boxNum], boxVal, row[0])
             elif modeType == 'Final':
                 if rowNum == 0:

@@ -14,8 +14,12 @@ Teams = [Team1, Team2, Team3, Team4]
 
 # Create the gameplay boxes
 sBoard = [""] * 6 + [opc.ozaPardyBox((ii+1)*10+(jj+1)) 
-         for ii in range(6) for jj in range(5)]
+         for jj in range(5) for ii in range(6)]
 dBoard = [""] * 6 + [opc.ozaPardyBox((ii+1)*10+(jj+1)) 
-         for ii in range(6) for jj in range(5)]
+         for jj in range(5) for ii in range(6)]
 boards = [sBoard, dBoard]
 fBoard = ["", opc.ozaPardyBox(11)]
+
+# Global variables to track the gameMode and currMode
+gameMode = 'Single'
+currMode = 'Single'

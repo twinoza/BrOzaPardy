@@ -1,3 +1,9 @@
+""" This module contains all the methods that are useful to have, but do not
+    require any ozaPardy specific classes.
+
+    These methods are required by some ozaPardy files in order to function
+"""
+
 import textwrap
 
 def myWrap(inStr):
@@ -38,60 +44,50 @@ def gmMode(modeType="Single"):
       return modes.index(modeType)
     else: return 0
 
-"""
-Sorry Neal, we are putting the query function here...
+def boxNum2boxId(num):
+    ''' Converts the boxNum for any given box to its respective column and row
+        coded as an ID (= 10*col + row)
 
-import serial
-import time
+        Input:
+            num:    (int) Between 6 and 35 that represents the List Index
 
-usbport = '/dev/cu.usbmodem1411'
-ser = serial.Serial(usbport, 9600, timeout=0.1)
+        Return:
+            boxId:  (int) ID for the ozaPardyBox that indicates col and row
 
-question_time = 30.
-question_ans_time = 20.
+         0 : C1      1 : C2      2 : C3      3 : C4      4 : C5      5 : C6
+         6 : 11      7 : 21      8 : 31      9 : 41     10 : 51     11 : 61
+        12 : 12     13 : 22     14 : 32     15 : 42     16 : 52     17 : 62
+        18 : 13     19 : 23     20 : 33     21 : 43     22 : 53     23 : 63
+        24 : 14     25 : 24     26 : 34     27 : 44     28 : 54     29 : 64
+        30 : 15     31 : 25     32 : 35     33 : 45     34 : 55     35 : 65
+    '''
+    cr = [(cc+1)*10+rr+1 for rr in range(5) for cc in range(6)]
+    lookup = {kk:vv for kk,vv in zip(range(6,36), cr)}
+    if num in lookup.keys():
+        return lookup[num]
+    else:
+        return -1
 
-def arduinoQuestionQueryThingFunction():
-    #wait for buttons to be up
-    buttonsUp = False
-    while not buttonsUp:
-        out = keepCheckingForAnswer(1.)
-        if out=='0':
-            buttonsUp = True
-        print("Check the buttons, dumbo!")
-    question_is_happening = True
-    while question_is_happening:
-        #NEAL: present the question on the button here
+def boxId2boxNum(boxId):
+    ''' Converts the boxId for any given box to its respective list index
+        referred to as boxNum
 
-        #now counting down and check for button press in question_time
-        out = keepCheckingForAnswer(question_time)
-        if out!='0':
-            #NEAL: take the question off the button here!
+        Input:
+            boxId:    (int) ID for the ozaPardyBox that indicates col and row
 
-            #now the user has question_ans_time to answer the question
-            start_ans_time = time.time()
-            answered = False
-            while ((time.time()-start_ans_time) < question_ans_time) and not answered:
-                #NEAL: when question is answered set answered to True
-                #NEAL:if answered correctly:
-                #NEAL:   score positive points for that team
-                #NEAL:   set question_is_happening = False
-                #NEAL:elif answered incorrectly:
-                #NEAL:   deduct points from the team
-                print('hey')
-        else:
-            question_is_happening = False #kill the question because no one answered
-    return
+        Return:
+            boxNum:   (int) Between 6 and 35 that represents the List Index
 
-
-def keepCheckingForAnswer(timeout1):
-    # ser = serial.Serial(usbport, 9600, timeout=0.1)
-    start_time = time.time()
-    msg = '0'
-    while ((time.time() - start_time) < timeout1) and msg=='0':
-        ser.write('S')
-        # time.sleep(0.050) #50 ms of sleep to allow time to read
-        # time.sleep(5)
-        msg = ser.read()
-    return msg
-
-"""
+         0 : C1      1 : C2      2 : C3      3 : C4      4 : C5      5 : C6
+         6 : 11      7 : 21      8 : 31      9 : 41     10 : 51     11 : 61
+        12 : 12     13 : 22     14 : 32     15 : 42     16 : 52     17 : 62
+        18 : 13     19 : 23     20 : 33     21 : 43     22 : 53     23 : 63
+        24 : 14     25 : 24     26 : 34     27 : 44     28 : 54     29 : 64
+        30 : 15     31 : 25     32 : 35     33 : 45     34 : 55     35 : 65
+    '''
+    cr = [(cc+1)*10+rr+1 for rr in range(5) for cc in range(6)]
+    lookup = {kk:vv for vv,kk in zip(range(6,36), cr)}
+    if boxId in lookup.keys():
+        return lookup[boxId]
+    else:
+        return -1
