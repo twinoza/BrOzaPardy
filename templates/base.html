@@ -18,8 +18,8 @@
   </div>
   {% for i in [0,1,2,3] %}
     <form class="frmTmName" method="POST" action="/editTeam" style="width:25%">
-      <input type="submit" name={{ teams[i].id }} class="tmName" value={{ teams[i].name }}>
-      <input type="hidden" name="hiddenBtnId" value={{ teams[i].id }} >
+      <input type="submit" name={{ teams[i].id }} class="tmName" value="{{ teams[i].name }}" >
+      <input type="hidden" name="hiddenBtnId" value="{{ teams[i].id }}" >
       <label id="s1">{{ teams[i].score }}</label>
     </form>
   {% endfor %}
