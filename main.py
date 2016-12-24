@@ -15,40 +15,47 @@ Teams = [Team1, Team2, Team3, Team4]
 
 @app.route('/', methods = ['POST', 'GET'])
 def index():
-    timer = "0:15"
-    teams = Teams
-    print("Hello from index in main.py")
-    if request.method =='POST':
-        btn = request.form
-        print(btn['teamName'], "POST MADE")
-        currTeam = int(btn['hiddenTeamId'])  ### This line needs to be edited
-        teams[currTeam].name = btn['teamName']
-        teams[currTeam].score = btn['teamScore']
+  timer = "0:15"
+  teams = Teams
+  print("Hello from index in main.py")
+  if request.method =='POST':
+    btn = request.form
+    print(btn['teamName'], "POST MADE")
+    currTeam = int(btn['hiddenTeamId'])  ### This line needs to be edited
+    teams[currTeam].name = btn['teamName']
+    teams[currTeam].score = btn['teamScore']
 
-   	# teams[clickedTeam].name = request.form["#teamname"]
-    return render_template('index.html', **locals())
+  # teams[clickedTeam].name = request.form["#teamname"]
+  return render_template('index.html', **locals())
 
-@app.route('/board/<sd>')
+@app.route('/board/<sd>')   #  <sd> is single or double ozapardy
 def drawBoard(sd):
-    global val
-    bdVal = val
-    teams = Teams
-    cats = ["This & That", "That&This", "This", "That", "Everything", "Lots & Lots of Nothing Else & even more"]
-    gmMulti = 1
-    if sd == "d":
-        gmMulti = 2
-    return render_template( 'board.html', **locals() )
+  global val
+  bdVal = val
+  teams = Teams
+  cats = ["This & That", "That&This", "This", "That", "Everything", "Lots & Lots of Nothing Else & even more"]
+  gmMulti = 1
+  if sd == "d":
+    gmMulti = 2
+  return render_template( 'board.html', **locals() )
 
 @app.route('/editTeam', methods =['POST'])
 def editTeam():
-	teams = Teams
-	teamId = int(request.form['hiddenBtnId'])
-	print("Team ID: ", teamId)
-	return render_template('editTeam.html', **locals() )
+  teams = Teams
+  teamId = int(request.form['hiddenBtnId'])
+  print("Team ID: ", teamId)
+  return render_template('editTeam.html', **locals() )
 
-@app.route('/updateTeamname')
-def updateTeamname():
-    return render_template('updateTeamname.html')
+@app.route('/clue/<cr>')   #  <RC> will be the clue number Row & Col 
+def clue(cr):
+  teams = Teams
+  row = int(int(cr)/10)
+  col = int(int(cr)%10)
+  clueVal=[['']*6]*5
+  cv = "He was the President of USA for last 8 years"
+  clueVal[2][1] = "He was the President of USA for last 8 years"
+  cval = clueVal[col][row]
+  return render_template('clue.html', **locals() )
 
 if __name__ == '__main__':
     app.run()

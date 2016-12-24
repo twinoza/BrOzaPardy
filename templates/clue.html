@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block head %}
+  {{ super() }}  {# This will permit the parent template 'base.html' to render #}
+<style>
+  button { width:100%; height:75%; }
+</style>
+{% endblock %}
+
+{% block content %}
+<p> {{ row }}, {{ col }} -- Are the row and Column Numbers </p>
+<p> {{ clueVal }} -- is the clueVal array </p>
+
+  <div style="text-align:center">
+    <!-- This will create value boxes on screen -->
+    <span>
+        <a href="/ans/{{col~row}}"><button class="gmBox"; name="clue~{{col~row}}"; %}>"{{ cVal }}"</button></a>
+    </span>
+    </div>
+  </div>
+{% endblock %}
