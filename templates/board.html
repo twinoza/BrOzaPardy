@@ -14,13 +14,14 @@
 {% block content %}
 
   <div style="text-align:center">
-    <span>  <!-- This will write the categories to the webpage -->
+    <div>  <!-- This will write the categories to the webpage -->
       {% for cat in cats %}
         {% set myId = "cat"~loop.index %}
         {% set myHref = "/" ~ myId %}
-        <div class=cat><label class=cat; id={{myId}} %}>{{cat}}</label></div>
+        <div class=cat><label class=cat; id={{myId}} ; >{{cat}}</label></div>
       {% endfor %}
-    </span>
+    </div>
+    <hr />
     <!-- This will create value boxes on screen -->
     <div style="text-align:center">
       {% for row in [0,1,2,3,4] %}

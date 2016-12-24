@@ -4,24 +4,22 @@
 
 {% block head %}
 	{{ super() }}  {# This will permit the parent template 'base.html' to render #}
-    <style> div{ margin-bottom: 5%; text-align: center; } </style> 
+    <style> 
+      p { color:white; font-weight: bold; text-align: center; }
+      input { font-size: 20pt; margin-bottom: 5%; }
+      button { font-size: 25pt; }
+    </style> 
 {% endblock %}
 
 {% block content %}
-  <p> {{btn[0]}} is the button pressed </p>
-  <form class="getTmName" method="post" action="/">
-	<p>What is the new teamname for button {{ v }} ### </p>
-  	<br />
-  	<input id=teamname; inputmode="text">
-  	<br />
-	<p>What is the new score for team {{ v }} ### </p>
-  	<br />
-  	<input id=teamScore; inputmode="text">
-  	<br />
-  	<br />
-    <button type=submit>Enter Name</button>
-  
+  <form  method="POST" action="/"; style="font-size:20pt; text-align: center; padding: 10% 0 10% 0;  " >
+    <p>What is the new teamname for button {{ teams[teamId].name }} </p>
+  	<input name="teamName" ; inputmode="text"; value={{teams[teamId].name}} ; >
+    <p>What is the new score for team {{ teams[teamId].name }} </p>
+    <input name="teamScore" ; inputmode="text"; value={{teams[teamId].score}} ; >
+    <br />
+    <button type=submit;>Enter Name</button>
+    <input type="hidden" ; name="hiddenTeamId" ; value = {{teamId}} ; >
   </form>
-
 {% endblock %}
 

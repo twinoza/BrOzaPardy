@@ -1,7 +1,7 @@
 from flask import Flask, request, render_template
 import logging
 import ozaPardyClasses as opc
-import getOzaPardy
+#import getOzaPardy
 
 app = Flask(__name__)
 
@@ -17,8 +17,15 @@ Teams = [Team1, Team2, Team3, Team4]
 def index():
     timer = "0:15"
     teams = Teams
+    print("Hello")
     if request.method =='POST':
-    	teams[clickedTeam].name = request.form["#teamname"]
+        btn =request.form
+        print(btn, "POST MADE")
+        currTeam = int(btn['hiddenTeamId'])  ### This line needs to be edited
+        teams[currTeam].name = btn['teamName']
+        teams[currTeam].score = btn['teamScore']
+
+   	# teams[clickedTeam].name = request.form["#teamname"]
     return render_template('index.html', **locals())
 
 @app.route('/board/<sd>')
@@ -26,7 +33,7 @@ def drawBoard(sd):
     global val
     bdVal = val
     teams = Teams
-    cats = ["This & That", "That&This", "This", "That", "Everything", "Lots & Lots of Nothing Else"]
+    cats = ["This & That", "That&This", "This", "That", "Everything", "Lots & Lots of Nothing Else & even more"]
     gmMulti = 1
     if sd == "d":
         gmMulti = 2
@@ -35,10 +42,8 @@ def drawBoard(sd):
 @app.route('/editTeam', methods =['POST'])
 def editTeam():
 	teams = Teams
-	btn = request.form
-	for k in btn.keys ():
-		for v in btn.getlist(k):
-			print (k,":",v)
+	teamId = int(request.form['hiddenBtnId'])
+	print("Team ID: ", teamId)
 	return render_template('editTeam.html', **locals() )
 
 @app.route('/updateTeamname')
