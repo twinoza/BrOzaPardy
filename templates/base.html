@@ -17,8 +17,13 @@
     <label>TIMER : </label><label id="timer">{{ timer }}</label>
   </div>
   {% for i in [0,1,2,3] %}
+<<<<<<< HEAD
     <form class="frmTmName" method="POST" action="/editTeam" style="width:35%">
       <input type="submit" name={{ teams[i].id }} class="tmName" value="{{ teams[i].name }}">
+=======
+    <form class="frmTmName" method="POST" action="/editTeam" style="width:25%">
+      <input type="submit" name={{ teams[i].id }} class="tmName" value="{{ teams[i].name }}" >
+>>>>>>> 62d998fd654e31ea96868cefdb4c75de711ac52f
       <input type="hidden" name="hiddenBtnId" value="{{ teams[i].id }}" >
       <label id="s1">{{ teams[i].score }}</label>
     </form>

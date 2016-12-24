@@ -13,13 +13,22 @@
 
 {% block content %}
   <form  method="POST" action="/"; style="font-size:20pt; text-align: center; padding: 10% 0 10% 0;  " >
+<<<<<<< HEAD
     <p>The team formerly known as {{ teams[teamId].name }} will now be</p>
+=======
+    <p>What is the new teamname for button {{ teams[teamId].name }} </p>
+>>>>>>> 62d998fd654e31ea96868cefdb4c75de711ac52f
   	<input name="teamName" ; inputmode="text"; value="{{teams[teamId].name}}" ; >
     <p>What is the new score for team {{ teams[teamId].name }} </p>
     <input name="teamScore" ; inputmode="text"; value="{{teams[teamId].score}}" ; >
     <br />
+<<<<<<< HEAD
     <button type=submit;>Update Team</button>
     <input type="hidden" ; name="hiddenTeamId" ; value = {{teamId}} ; >
+=======
+    <button type=submit;>Enter Name</button>
+    <input type="hidden" ; name="hiddenTeamId" ; value ="{{teamId}}" ; >
+>>>>>>> 62d998fd654e31ea96868cefdb4c75de711ac52f
   </form>
 {% endblock %}
 
