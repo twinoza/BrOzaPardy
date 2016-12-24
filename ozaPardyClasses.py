@@ -11,7 +11,7 @@ class ozaPardyBox(object):
 
         # 0 = Text (i.e. Not Media), 1 = Image, 2 = Audio, 3 = Video 
         self.mediaType = mediaType
-        self.mediaFName = 'media/'+mediaFName
+        self.mediaFName = mediaFName
 
 
     def clicked(self):

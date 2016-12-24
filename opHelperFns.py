@@ -2,16 +2,44 @@ import textwrap
 
 def myWrap(inStr):
     ''' Wraps text
-        inStr: input string that needs to be wrapped
-        tmp: temporary string that has the output
+
+        Inputs:
+            inStr:  (str) Input text that needs to be wrapped
+
+        Return:
+            outStr: (str) Modified text with '\n' to automatically wrap text
     '''
-    tmp = textwrap.wrap(inStr, 30)
-    tmp = '\n'.join(tmp) 
-    return tmp
+    outStr = textwrap.wrap(inStr, 30)
+    outStr = '\n'.join(outStr) 
+    return outStr
+
+def gmMode(modeType="Single"):
+    ''' Translates the current game mode to a number:
+            Single   : 0
+            Double   : 1
+            Final    : 3
+            Clue     : 4
+            Klok     : 5
+            Response : 6
+            Daily    : 7
+            Blank    : 8
+
+        Inputs:
+            modeType:   (str) Current game mode
+            
+        Return:
+            rdNum:      (int) Corresponding number of game mode
+    '''
+    
+    modes = ['Single', 'Double', 'Final', 'Clue',
+             'Klok', 'Response', 'Daily', 'Blank']
+
+    if modeType in modes:
+      return modes.index(modeType)
+    else: return 0
 
 """
 Sorry Neal, we are putting the query function here...
-"""
 
 import serial
 import time
@@ -22,20 +50,20 @@ ser = serial.Serial(usbport, 9600, timeout=0.1)
 question_time = 30.
 question_ans_time = 20.
 
-def ArduinoQuestionQueryThingFunction():
+def arduinoQuestionQueryThingFunction():
     #wait for buttons to be up
-    buttonsup = False
-    while not buttonsup:
-        out = keep_checking_for_answer(1.)
+    buttonsUp = False
+    while not buttonsUp:
+        out = keepCheckingForAnswer(1.)
         if out=='0':
-            buttonsup = True
+            buttonsUp = True
         print("Check the buttons, dumbo!")
     question_is_happening = True
     while question_is_happening:
         #NEAL: present the question on the button here
 
         #now counting down and check for button press in question_time
-        out = keep_checking_for_answer(question_time)
+        out = keepCheckingForAnswer(question_time)
         if out!='0':
             #NEAL: take the question off the button here!
 
@@ -55,7 +83,7 @@ def ArduinoQuestionQueryThingFunction():
     return
 
 
-def keep_checking_for_answer(timeout1):
+def keepCheckingForAnswer(timeout1):
     # ser = serial.Serial(usbport, 9600, timeout=0.1)
     start_time = time.time()
     msg = '0'
@@ -66,4 +94,4 @@ def keep_checking_for_answer(timeout1):
         msg = ser.read()
     return msg
 
-
+"""

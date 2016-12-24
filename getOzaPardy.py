@@ -1,45 +1,65 @@
+""" This module provides all the methods in order to:
+    'gets' the clues and responses from a TSV file
+"""
+
+import g
 from numpy import loadtxt
 from math import ceil
 import opHelperFns as ophf
 
 #Pass in Boxes to be populated
-def getJeopardyData(boxes, gameType=0, doc_name="OzaPardy"):
+def getJeopardyData(modeType, docName):
     '''Gets the OzaPardy data from a TSV file and stores it into a list of
-    OzaPardyBox objects
+    ozaPardyBox objects
 
     Inputs: 
+        modeType:   (str) Determines 'Single', 'Double', or 'Final' jeopardy
+        docName:    (str) Specify the document name from which to load data
 
+    Return:
+        board:      (tuple) ozaPardyBox(es) populated with clues/responses and all
+        
     '''
-    print("Start getJeopardyData")
-
-    if gameType == 0:
-        fName = 'static/data/OzaPardy - Single.tsv'
-        data = loadtxt(fName, dtype='S', delimiter='\t', skiprows=1)
-        print('Loaded Single Jeopardy')
-    elif gameType == 1:
-        fName = 'static/data/OzaPardy - Single.tsv'
-        data = loadtxt(fName, dtype='S', delimiter='\t', skiprows=1)
-        print('Loaded Double Jeopardy')
+    if modeType == 'Single':
+        tmpBoard = g.sBoard
+    elif modeType == 'Double':
+        tmpBoard = g.dBoard
+    elif modeType == 'Final':
+        tmpBoard = g.fBoard
     else:
-        print('Error in getJeopardyData: Invalid gameType')
-        return()
+        print("Check your modeType b/c it ain't one I know: " + modeType)
+
+    print("Start getJeopardyData: " + modeType)
+    
+    data = loadtxt(docName, dtype=bytes, delimiter='\t', skiprows=1).astype(str)
+    print('Loaded ' + modeType + ' Jeopardy from ' + docName)
+    print('Parsing data')
     
     for rowNum, row in enumerate(data):
         for colNum, boxVal in enumerate(row):
             boxNum = int((ceil(rowNum/2.)*6) + (colNum-1))
-            if colNum != 0:
+            if modeType in ['Single', 'Double'] and colNum != 0:
                 if rowNum == 0:   # Fill in category Names
-                    ###boxes[gameType][boxNum] = boxVal #row[key].text
-                    print(boxVal)
-                else:         # Fill in Clue/Response boxes
-                    parseOzaPardyBox(boxes[gameType][boxNum], boxVal, row[0])
+                    tmpBoard[boxNum] = boxVal
+                else:         # Fill in Clue/Response boxes in board
+                    parseOzaPardyBox(tmpBoard[boxNum], boxVal, row[0])
+            elif modeType == 'Final':
+                if rowNum == 0:
+                  tmpBoard[0] = boxVal
+                if rowNum == 1:
+                  tmpBoard[1].clue = ophf.myWrap(boxVal)
+                if rowNum == 2:
+                  tmpBoard[1].response = ophf.myWrap(boxVal)
+
+    return tmpBoard
+
 
 # opBox is OzaPardyBox
 # cellData is the first column of the spreadsheet which determines whether
 #     the row is a clue or a response and the point value associated with 
 #     that row.
 def parseOzaPardyBox(opBox, boxVal, cellData):
-    #[cellType, cellVal] = gDict['tiles'].text.split()
+    mediaDir = 'static/data/media/'
     [cellType, cellVal] = cellData.split()
     opBox.value = cellVal
 
@@ -61,3 +81,5 @@ def parseOzaPardyBox(opBox, boxVal, cellData):
         opBox.clue = ophf.myWrap(clue)
     else:
         opBox.response = ophf.myWrap(clue)
+
+    return opBox
