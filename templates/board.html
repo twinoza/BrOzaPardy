@@ -4,9 +4,10 @@
 {% block head %}
   {{ super() }}  {# This will permit the parent template 'base.html' to render #}
   <script type="text/javascript">
-  function blank(btnId) {
-    $("btnId").css('visibility','hiddden');
-  }
+  // function blank(btnId) {
+  //   print (btnID)
+  //   btnId.disabled = true;
+  // }
   </script>
 
 {% endblock %}
@@ -29,8 +30,7 @@
         {% set outerloop = loop %}
         {% for col in [0,1,2,3,4,5] %}
           {% set myId = "clue"~loop.index~outerloop.index %}
-          {% set myHref = "/clue" %}
-          <a href="#"><button class="gmBox"; onclick="blank({{myId}})"; id={{myId}} %}>{{ bdVal[row][col] }}</button></a>
+          <a href="/clue/{{loop.index}}{{outerloop.index}}"><button class="gmBox"; name="{{myId}}"; %}>{{ bdVal[row][col] }}</button></a>
         {% endfor %}
       </span>
     {% endfor %}

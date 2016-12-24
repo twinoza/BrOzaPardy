@@ -7,20 +7,20 @@ app = Flask(__name__)
 
 val = [ [100]*6, [200]*6, [300]*6, [400]*6, [500]*6 ] # Initialize the boxes for OzaPardy
 
-Team1 = opc.team(0, 'Mice', 2500)
-Team2 = opc.team(1, 'Men', 2200)
-Team3 = opc.team(2, 'None', 0000)
-Team4 = opc.team(3, 'None', 0000)
+Team1 = opc.team(0, 'Team 1', 0000)
+Team2 = opc.team(1, 'Team 2', 0000)
+Team3 = opc.team(2, 'Team 3', 0000)
+Team4 = opc.team(3, 'Team 4', 0000)
 Teams = [Team1, Team2, Team3, Team4]
 
 @app.route('/', methods = ['POST', 'GET'])
 def index():
     timer = "0:15"
     teams = Teams
-    print("Hello")
+    print("Hello from index in main.py")
     if request.method =='POST':
-        btn =request.form
-        print(btn, "POST MADE")
+        btn = request.form
+        print(btn['teamName'], "POST MADE")
         currTeam = int(btn['hiddenTeamId'])  ### This line needs to be edited
         teams[currTeam].name = btn['teamName']
         teams[currTeam].score = btn['teamScore']

@@ -13,12 +13,12 @@
 
 {% block content %}
   <form  method="POST" action="/"; style="font-size:20pt; text-align: center; padding: 10% 0 10% 0;  " >
-    <p>What is the new teamname for button {{ teams[teamId].name }} </p>
-  	<input name="teamName" ; inputmode="text"; value={{teams[teamId].name}} ; >
+    <p>The team formerly known as {{ teams[teamId].name }} will now be</p>
+  	<input name="teamName" ; inputmode="text"; value="{{teams[teamId].name}}" ; >
     <p>What is the new score for team {{ teams[teamId].name }} </p>
-    <input name="teamScore" ; inputmode="text"; value={{teams[teamId].score}} ; >
+    <input name="teamScore" ; inputmode="text"; value="{{teams[teamId].score}}" ; >
     <br />
-    <button type=submit;>Enter Name</button>
+    <button type=submit;>Update Team</button>
     <input type="hidden" ; name="hiddenTeamId" ; value = {{teamId}} ; >
   </form>
 {% endblock %}
