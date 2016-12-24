@@ -1,0 +1,27 @@
+{# this is the child template which will extend the parent "base.html" #}
+{% extends "base.html" %}
+{% block title %}New Teamname{% endblock %}
+
+{% block head %}
+	{{ super() }}  {# This will permit the parent template 'base.html' to render #}
+    <style> div{ margin-bottom: 5%; text-align: center; } </style> 
+{% endblock %}
+
+{% block content %}
+  <p> {{btn[0]}} is the button pressed </p>
+  <form class="getTmName" method="post" action="/">
+	<p>What is the new teamname for button {{ v }} ### </p>
+  	<br />
+  	<input id=teamname; inputmode="text">
+  	<br />
+	<p>What is the new score for team {{ v }} ### </p>
+  	<br />
+  	<input id=teamScore; inputmode="text">
+  	<br />
+  	<br />
+    <button type=submit>Enter Name</button>
+  
+  </form>
+
+{% endblock %}
+

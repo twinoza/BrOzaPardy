@@ -18,7 +18,7 @@
       {% for cat in cats %}
         {% set myId = "cat"~loop.index %}
         {% set myHref = "/" ~ myId %}
-        <a href={{myHref}}><button class="cat"; id={{myId}} %}>{{cat}}</button></a>
+        <div class=cat><label class=cat; id={{myId}} %}>{{cat}}</label></div>
       {% endfor %}
     </span>
     <!-- This will create value boxes on screen -->

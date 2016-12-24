@@ -7,10 +7,10 @@ app = Flask(__name__)
 
 val = [ [100]*6, [200]*6, [300]*6, [400]*6, [500]*6 ] # Initialize the boxes for OzaPardy
 
-Team1 = opc.team('Mice', 2500)
-Team2 = opc.team('Men', 2200)
-Team3 = opc.team('None', 0000)
-Team4 = opc.team('None', 0000)
+Team1 = opc.team(0, 'Mice', 2500)
+Team2 = opc.team(1, 'Men', 2200)
+Team3 = opc.team(2, 'None', 0000)
+Team4 = opc.team(3, 'None', 0000)
 Teams = [Team1, Team2, Team3, Team4]
 
 @app.route('/', methods = ['POST', 'GET'])
@@ -18,7 +18,7 @@ def index():
     timer = "0:15"
     teams = Teams
     if request.method =='POST':
-    	teams[clickedTeam].name = request.form['#teamname']
+    	teams[clickedTeam].name = request.form["#teamname"]
     return render_template('index.html', **locals())
 
 @app.route('/board/<sd>')
@@ -32,11 +32,14 @@ def drawBoard(sd):
         gmMulti = 2
     return render_template( 'board.html', **locals() )
 
-@app.route('/getTeamname', methods =['POST'])
-def getTeamname():
+@app.route('/editTeam', methods =['POST'])
+def editTeam():
 	teams = Teams
-#	btn_id = request.form['submit']
-	return render_template('getTeamname.html', **locals() )
+	btn = request.form
+	for k in btn.keys ():
+		for v in btn.getlist(k):
+			print (k,":",v)
+	return render_template('editTeam.html', **locals() )
 
 @app.route('/updateTeamname')
 def updateTeamname():
