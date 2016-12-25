@@ -34,17 +34,14 @@ def getJeopardyData(modeType, docName):
     
     data = loadtxt(docName, dtype=bytes, delimiter='\t', skiprows=1).astype(str)
     print('Loaded ' + modeType + ' Jeopardy from ' + docName)
-    print('Parsing data')
     
     for rowNum, row in enumerate(data):
         for colNum, boxVal in enumerate(row):
             boxNum = int((ceil(rowNum/2.)*6) + (colNum-1))
             if modeType in ['Single', 'Double'] and colNum != 0:
                 if rowNum == 0:   # Fill in category Names
-                    print(boxNum, tmpBoard[boxNum], boxVal)
                     tmpBoard[boxNum] = boxVal
                 else:         # Fill in Clue/Response boxes in board
-                    print(boxNum, tmpBoard[boxNum].id, boxVal)
                     parseOzaPardyBox(tmpBoard[boxNum], boxVal, row[0])
             elif modeType == 'Final':
                 if rowNum == 0:
@@ -57,15 +54,15 @@ def getJeopardyData(modeType, docName):
     # Make daily doubles
     if modeType == 'Single':
         r1 = random.randrange(30)
-        self.boxes[0][r1+6].isDailyDouble = True
+        g.boards[0][r1+6].isDailyDouble = True
     elif modeType == 'Double':
         r2 = random.randrange(30)
         r3 = random.randrange(30)
         while r2 == r3:
             r3 = random.randrange(30)
         
-        self.boxes[1][r2+6].isDailyDouble = True
-        self.boxes[1][r3+6].isDailyDouble = True
+        g.boards[1][r2+6].isDailyDouble = True
+        g.boards[1][r3+6].isDailyDouble = True
 
     return tmpBoard
 
