@@ -9,7 +9,7 @@ import g
 ARDUINO = True
 
 if ARDUINO:
-    usbport = '/dev/cu.usbmodem1411'
+    usbport = '/dev/cu.usbmodem1421'
     ser = serial.Serial(usbport, 9600, timeout=0.1)
 
 class arduinoTalker(object):
@@ -25,7 +25,7 @@ class arduinoTalker(object):
         #class method that waits until buttons are down to continue
         buttonsUp = False
         while not buttonsUp:
-            out = self.contcheckforanswer(0.5)
+            out = self.contCheckForAnswer(0.5)
             if out=='0':
                 buttonsUp = True
         return
@@ -39,14 +39,15 @@ class arduinoTalker(object):
         msg = '0'
         while ((time.time() - startTime) < timeout1) and msg=='0':
             ser.write('S')
-            msg = ser.read()
+            tmpmsg = ser.readline()
+            msg = tmpmsg[:-2]
         return msg
 
     def checkDead(self):
         if not ARDUINO:
             return False
         ser.write('S')
-        msg = ser.read()
+        msg = ser.readline()
         if not msg:
             return True
         else:

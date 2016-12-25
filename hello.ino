@@ -24,17 +24,17 @@ void loop() {  // run over and over again
   // now check buttons 2 through 12 for the first button that is down
   for (int n=1; n < 13; n++) {
       if (digitalRead(n) == LOW) {
-        Serial.print(n);
+        Serial.println(n);
         down = 1;
         break;
       }
   }
   if ((down == 0) && (digitalRead(14) == LOW)) {  // if only A0 is low
-        Serial.print("14");
+        Serial.println("14");
         down = 1;
       }
   if (down == 0) {
-    Serial.print(0);  // 0 tells the host no button was down.
+    Serial.println(0);  // 0 tells the host no button was down.
   }
 }
 
