@@ -42,6 +42,8 @@ def clue(cr):
   teams = g.Teams
   col = int(int(cr)/10)
   row = int(int(cr)%10)
+  
+  # cv is just a temp variable for testing purpose
   cv = "He was the President of USA for last 8 years and these were the last 8 Presidents of USA and Prime Ministers of India"
   return render_template('clue.html', **locals() )
 
