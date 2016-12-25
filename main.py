@@ -48,9 +48,14 @@ def editTeam():
 @app.route('/clue/<cr>')   #  <RC> will be the clue number Row & Col 
 def clue(cr):
   teams = g.Teams
+  startTime = "5:00"
+
+  if cr == "k":  # Time to display clock
+    return render_template('klok.html', **locals() )
+
   col = int(int(cr)/10)
   row = int(int(cr)%10)
-  
+
   # cv is just a temp variable for testing purpose
   cv = "He was the President of USA for last 8 years and these were the last 8 Presidents of USA and Prime Ministers of India"
   return render_template('clue.html', **locals() )

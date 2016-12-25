@@ -32,7 +32,7 @@
         {% for col in [0,1,2,3,4,5] %}
           {% set myId = "clue"~loop.index~outerloop.index %}
           <a href="/clue/{{loop.index}}{{outerloop.index}}">
-            <button class="gmBox"; name="{{myId}}"; %}> {{ (gmMulti) * (bdVal[col][row]) }}</button>
+            <button class="gmBox"; name="{{myId}}"; %}> {{ gmMulti * bdVal[col][row] }}</button>
           </a>
         {% endfor %}
       </span>
