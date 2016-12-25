@@ -30,13 +30,11 @@ def index():
 @app.route('/board/<sd>')   #  <sd> is single or double ozapardy
 def drawBoard(sd):
   global val
-  bdVal = val
-  print(bdVal)
+  g.gameMode = sd
   teams = g.Teams
-  cats = ["This & That", "That&This", "This", "That", "Everything", "Lots & Lots of Nothing Else & even more"]
-  gmMulti = 1
-  if sd == "d":
-    gmMulti = 2
+  mNum = ophf.gmMode(sd)
+  cats = g.boards[mNum][0:6]
+  bdVal = [[ ii*(mNum+1) for ii in jj] for jj in val ]
   return render_template( 'board.html', **locals() )
 
 @app.route('/editTeam', methods=['POST'])
@@ -54,10 +52,14 @@ def clue(cr):
   if cr == "k":  # Time to display clock
     return render_template('klok.html', **locals() )
 
-  col = int(int(cr)/10)
-  row = int(int(cr)%10)
+  CRint = int(cr)
+
+  col = int(CRint/10)
+  row = int(CRint%10)
   
-  clueText = g.boards[ophf.gmMode(g.gameMode)][ophf.boxId2boxNum(int(cr))].clue
+  mNum = ophf.gmMode(g.gameMode)
+  clueText = g.boards[mNum][ophf.boxId2boxNum(CRint)].clue
+
   return render_template('clue.html', **locals() )
 
 if __name__ == '__main__':
