@@ -4,7 +4,15 @@ import logging
 
 app = Flask(__name__)
 
-val = [ [i for i in range(100,600,100)],]*6 # Initialize the boxes for OzaPardy
+# Initialize the values for boxes in OzaPardy
+val = [ [i for i in range(100,600,100)],]*6
+
+# Get the Jeopardy data from the TSV files
+g.sBoard = getOP.getJeopardyData('Single', 'static/data/OzaPardy - Single.tsv')
+g.dBoard = getOP.getJeopardyData('Double', 'static/data/OzaPardy - Double.tsv')
+g.fBoard = getOP.getJeopardyData('Final', 'static/data/OzaPardy - Final.tsv')
+
+# Teams are set up in g.py
 
 @app.route('/', methods = ['POST', 'GET'])
 def index():

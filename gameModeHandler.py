@@ -4,6 +4,7 @@
 from arduinoComm import arduinoTalker
 import time
 import g
+import opHelperFns as ophf
 
 
 clueShownTime = 15.
@@ -40,3 +41,12 @@ def arduinoQuestionQueryThingFunction():
     return
 
 
+# This routine checkes if all boxes have been clicked & so the game is done.
+def areWeDoneYet():
+    # Assign value depending on 'Single' or 'Double'
+    mNum = ophf.gmMode(g.gameMode)  
+
+    done = True
+    for ii in range(30):
+        done = (g.board[mNum][ii+6].isClicked and done)
+    return done

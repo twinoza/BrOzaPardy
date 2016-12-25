@@ -19,8 +19,9 @@ class ozaPardyBox(object):
 
 
 class team(object):
-    def __init__(self, teamId, name, score=0):
+    def __init__(self, teamId, name, clickerPorts, score=0):
         self.id = teamId
         self.name = name
         self.score = score
+        self.clickerPorts = clickerPorts
         #Maybe include way to track right and wrong answers

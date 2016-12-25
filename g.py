@@ -6,10 +6,10 @@
 import ozaPardyClasses as opc
 
 # Create the teams
-Team1 = opc.team(0, 'Team 1', 0)
-Team2 = opc.team(1, 'Team 2', 0)
-Team3 = opc.team(2, 'Team 3', 0)
-Team4 = opc.team(3, 'Team 4', 0)
+Team1 = opc.team(0, 'Team 1', ['2', '3', '4'], 0)
+Team2 = opc.team(1, 'Team 2', ['5', '6', '7'], 0)
+Team3 = opc.team(2, 'Team 3', ['8', '9', '10'], 0)
+Team4 = opc.team(3, 'Team 4', ['11', '12', '14'], 0)
 Teams = [Team1, Team2, Team3, Team4]
 
 # Create the gameplay boxes
