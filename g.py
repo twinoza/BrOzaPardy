@@ -23,3 +23,7 @@ fBoard = ["", opc.ozaPardyBox(11)]
 # Global variables to track the gameMode and currMode
 gameMode = 'Single'
 currMode = 'Single'
+
+# Global variables to track which team is active and which controls the board
+currTeam = 0
+lastCorrectTeam = 0

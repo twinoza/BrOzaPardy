@@ -11,12 +11,12 @@ def arduinoQuestionQueryThingFunction():
     at.checkup() #wait until buttons are down to continue
     #NEAL: PRESENT THE CLUE HERE
 
-    questionHappening = True
-    while questionHappening:
+    clueHappening = True
+    while clueHappening:
         val = at.contcheckforanswer()
         if val=='0':
             print('Clue not answered in time. Moving on...')
-            questionHappening=False
+            clueHappening=False
         else:
             #NEAL: REMOVE CLUE HERE
 
