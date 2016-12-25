@@ -21,9 +21,9 @@ This file will display Cluees, Responses, Daily Double, Blank Screen, & Final Je
     <span>
         {% if mediaClue %}
           <iframe class="clueBox"; name="media"; %}>{{ cv }}</iframe>
-          <button class="clueBox"; name="clue~{{col~row}}"; %}>{{ cv }}</button>
+          <button class="clueBox"; name="clue~{{col~row}}"; %}>{{ clueText }}</button>
         {% else %}
-          <button class="clueBox"; name="clue~{{col~row}}"; %}>{{ cv }}</button>
+          <button class="clueBox"; name="clue~{{col~row}}"; %}>{{ clueText }}</button>
         {% endif %}
     </span>
 <!--     <span>

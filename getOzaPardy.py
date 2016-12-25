@@ -6,7 +6,7 @@ import g
 from numpy import loadtxt
 from math import ceil
 import random
-import opHelperFns as ophf
+#import opHelperFns as ophf
 
 #Pass in Boxes to be populated
 def getJeopardyData(modeType, docName):
@@ -47,9 +47,11 @@ def getJeopardyData(modeType, docName):
                 if rowNum == 0:
                   tmpBoard[0] = boxVal
                 if rowNum == 1:
-                  tmpBoard[1].clue = ophf.myWrap(boxVal)
+                  #tmpBoard[1].clue = ophf.myWrap(boxVal)
+                  tmpBoard[1].clue = boxVal
                 if rowNum == 2:
-                  tmpBoard[1].response = ophf.myWrap(boxVal)
+                  #tmpBoard[1].response = ophf.myWrap(boxVal)
+                  tmpBoard[1].response = boxVal
 
     # Make daily doubles
     if modeType == 'Single':
@@ -91,9 +93,11 @@ def parseOzaPardyBox(opBox, boxVal, cellData):
         elif parsedMediaType == 'Vid':
             opBox.mediaType = 3
             opBox.mediaFName = mediaDir + parsedMediaFName
-        opBox.clue = ophf.myWrap(clue)
+        #opBox.clue = ophf.myWrap(clue)
+        opBox.clue = clue
     else:
-        opBox.response = ophf.myWrap(clue)
+        #opBox.response = ophf.myWrap(clue)
+        opBox.response = clue
 
     return opBox
 
