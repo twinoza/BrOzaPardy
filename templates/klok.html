@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}Clue{% endblock %}
+
+{% block head %}
+  {{ super() }}  {# This will permit the parent template 'base.html' to render #}
+
+
+
+<SCRIPT LANGUAGE="JavaScript">
+// Author: Patrick Fairfield
+// Fairfield Consulting
+// change your event date event here.
+
+var eventdate = new Date();   // new Date("December 25, 2003 23:59:59");
+
+function toSt(n) {
+  s=""
+  if(n<10) s+="0"
+  return s+n.toString();
+}
+
+function countdown() {
+  cl=document.clock;
+  d=new Date();
+  count=Math.floor((eventdate.getTime()-d.getTime())/1000);
+  if(count<=0) {
+    cl.days.value ="----"; cl.hours.value="--";
+    cl.mins.value="--"; cl.secs.value="--";
+    return;
+  }
+  cl.secs.value=toSt(count%60); count=Math.floor(count/60);
+  cl.mins.value=toSt(count%60); count=Math.floor(count/60);
+  cl.hours.value=toSt(count%24); count=Math.floor(count/24);
+  cl.days.value=count; 
+
+  setTimeout("countdown()",50);
+}
+</SCRIPT>
+
+
+{% endblock %}
+<!--
+
+This file will display KLOK.
+
+
+
+-->
+
+{% block content %}
+
+
+<!-- <p style="color:white"> {{ row }}, {{ col }} -- Are the row and Column Numbers </p>
+<p style="color:white"> {{ clueVal }} -- is the clueVal array </p>
+ -->
+  <div style="text-align:center">
+    <!-- This will display clue box on screen -->
+    <span>
+
+      <FORM name="clock">
+        <TABLE BORDER=5 CELLSPACING=10 CELLPADDING=0 BGCOLOR="#000000">
+          <TR>
+<!--             <TD ALIGN=CENTER WIDTH="31%" BGCOLOR="#000080"><FONT COLOR="#FFFFFF"><B>Days:</B></FONT></TD>
+            <TD ALIGN=CENTER WIDTH="23%" BGCOLOR="#000080"><FONT COLOR="#FFFFFF"><B>Hours:</B></FONT></TD>
+            <TD ALIGN=CENTER WIDTH="23%" BGCOLOR="#000080"><FONT COLOR="#FFFFFF"><B>Mins:</B></FONT></TD>
+ -->            <TD ALIGN=CENTER WIDTH="23%" BGCOLOR="#000080"><FONT COLOR="#FFFFFF"><B>Secs:</B></FONT></TD>
+          </TR>
+          <TR>
+<!--             <TD ALIGN=CENTER><INPUT name="days" size=4></TD>
+            <TD ALIGN=CENTER><INPUT name="hours" size=2></TD>
+            <TD ALIGN=CENTER><INPUT name="mins" size=2></TD>
+ -->            <TD ALIGN=CENTER><INPUT name="secs" size=2></TD>
+          </TR>
+          <TR>
+            <TD COLSPAN="4" BGCOLOR="#000000">
+              <CENTER><P><FONT COLOR="#00FF00" SIZE=+1>
+                <SCRIPT LANGUAGE="JavaScript">
+                <!--
+                document.write(" " + eventdate.toLocaleString() + " ");
+                // end hiding script-->
+                </SCRIPT>
+              </FONT> </CENTER>
+            </TD>
+          </TR>
+        </TABLE>
+      </FORM>
+
+
+
+
+          <button class="clueBox"; name="clue~{{col~row}}"; %}>{{ cv }}</button>
+    </span>
+    <span>
+        <a href="/ans/{{col~row}}"><button class="gmBox"; name="clue~{{col~row}}"; %}>Correct</button></a>
+        <a href="/ans/{{col~row}}"><button class="gmBox"; style="margin:30px"; name="clue~{{col~row}}"; %}>Incorrect</button></a>
+    </span>
+  </div>
+{% endblock %}
