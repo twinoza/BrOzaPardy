@@ -7,7 +7,6 @@ import g
 
 
 def arduinoQuestionQueryThingFunction():
-    # Wait for buttons to be up
     at = arduinoTalker()
     at.checkup() #wait until buttons are down to continue
     #NEAL: PRESENT THE CLUE HERE
@@ -20,6 +19,7 @@ def arduinoQuestionQueryThingFunction():
             questionHappening=False
         else:
             #NEAL: REMOVE CLUE HERE
+
             print('Buzzer ',val,' has been clicked!')
             startAnsTime = time.time()
             answered = False
@@ -29,7 +29,7 @@ def arduinoQuestionQueryThingFunction():
                 #NEAL:   score positive points for that team
                 #NEAL:   set clueIsShown = False
                 #NEAL:elif answered incorrectly:
-                #NEAL:   deduct points from the team
+                #NEAL:   deduct points from the team, added clue back to screen 
                 print('hey')
 
     return
