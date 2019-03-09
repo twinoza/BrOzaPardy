@@ -8,13 +8,14 @@ Date:  Started Dec 16, 2012
 Started: Dec 16, 2012
 Dec 24th 2013:  Fixed bugs to actually make it work.
 Dec 23rd 2014:  Add in comments and clear up code for media ability
+Dec 15th 2016:  Address some of the todo's
 '''
 
 import sys
 #import gdata.docs
 #import gdata.docs.service
 #import gdata.spreadsheet.service
-import gspread
+#import gspread
 import re, os
 import time
 import datetime as dt
@@ -63,20 +64,20 @@ def authorizeOzaPardy():
     json_key['private_key'],
     scope)
   gc = gspread.authorize(credentials)
-  print "access_token: %s" % credentials.access_token
+  print("access_token: %s") % credentials.access_token
   return(gc)
 
 cmd = "OzaPardy cmozafam Jeopardy4us [-h] [-a] [-s] [-d] [-f]"
 if len(sys.argv) < 1:
-  print (cmd)
+  print(cmd)
   exit()
 if len(sys.argv) > 3:
   x = str(sys.argv)
   if '-a' in x:
-    print 'Set program in debug mode without Arduino'
+    print('Set program in debug mode without Arduino')
     ARDUINO = False
   if '-h' in x:
-    print (cmd)
+    print(cmd)
     exit()
   if '-s' in x:
     SINGLE = True
@@ -94,7 +95,7 @@ ID_TIMER2 = 2001
 serDelay = 100
 countdownDelay = 1000  # in ms?
 mediaDir = 'media/'
-#print ser
+#print(ser)
 
 class ozaPardyBox(object):
   def __init__(self, clue=None, response=None, value=None, 
@@ -213,9 +214,9 @@ class mainWin(wx.Frame):
     self.serialTimer.Stop()
     msg = ser.readline();
     if (msg):
-      print "XXXX - Serial Input: " + msg
+      print("XXXX - Serial Input: " + msg)
       self.setCurrTeam(msg.strip())
-#DEBUG      print "XXXX - Current Team #: ", self.currTeam
+#DEBUG      print("XXXX - Current Team #: ", self.currTeam)
       self.OnClueClickerClicked()
       #self.tempMsg = msg
       #ser.write('W')
@@ -235,19 +236,19 @@ class mainWin(wx.Frame):
     if ARDUINO:
       ser.flushInput()
       ser.flushOutput()
-#DEBUG      print "HW State Letter: ", hwStateLetter
+#DEBUG      print("HW State Letter: ", hwStateLetter)
       ser.write(hwStateLetter)
     self.serialTimer.Start()
 
   def timerFunc(self, e):
     timerId = e.GetId()
     if timerId == ID_TIMER:
-#      print "XXXX - Serial Timer Time: ", dt.datetime.now()
-#      print "XXXX - Serial Read Timer Event"
+#      print("XXXX - Serial Timer Time: ", dt.datetime.now())
+#      print("XXXX - Serial Read Timer Event")
       if ARDUINO: self.readSerial(e)
     elif timerId == ID_TIMER2:
-      #print "Countdown Timer Time: ", dt.datetime.now()
-      #print "Countdown Timer Event"
+      #print("Countdown Timer Time: ", dt.datetime.now())
+      #print("Countdown Timer Event")
       self.timerUpdate(e)
 
   def mode(self, modeType='Single'):
@@ -261,7 +262,7 @@ class mainWin(wx.Frame):
     done = True
     for ii in range(30):
       done = (self.boxes[mNum][ii+6].isClicked and done)
-#    print 'gameMode/mNum/done', self.gameMode, mNum, done
+#    print('gameMode/mNum/done', self.gameMode, mNum, done)
     return done
 
   # gameType variable tells you what round of the game you are in.
@@ -273,7 +274,7 @@ class mainWin(wx.Frame):
     #passwd      = 'Jeopardy4us'
 #    doc_name = raw_input('What is name of OzaPardy sheet? '+
 #       Sheet must be shared with cmozafam@gmail.com...\nType in Sheetname: ')
-    print "Start getJeopardyData"
+    print("Start getJeopardyData")
     # Connect to Google
 #    gd_client = gdata.spreadsheet.service.SpreadsheetsService()
 #    gd_client.email = username
@@ -285,7 +286,7 @@ class mainWin(wx.Frame):
 #    q['title'] = doc_name
 #    q['title-exact'] = 'true'
 #    feed = gd_client.GetSpreadsheetsFeed(query=q)
-##    print feed
+##    print(feed)
 #    spreadsheet_id = feed.entry[0].id.text.rsplit('/',1)[1]
 #    feed = gd_client.GetWorksheetsFeed(spreadsheet_id)
 #    worksheet_id = feed.entry[gameType].id.text.rsplit('/',1)[1]
@@ -312,7 +313,7 @@ class mainWin(wx.Frame):
       data = loadtxt('OzaPardy - Double.tsv', dtype='S', delimiter='\t', skiprows=1)
       print('Loaded Double Jeopardy')
     else:
-      print ('Error in getJeopardyData: Invalid gameType')
+      print('Error in getJeopardyData: Invalid gameType')
       return()
 
     for rowNum, row in enumerate(data):
@@ -328,7 +329,7 @@ class mainWin(wx.Frame):
 #    username    = 'cmozafam@gmail.com'
 #    passwd      = 'Jeopardy4us'
 #
-#    print "Start getFinalJeopardy"
+#    print("Start getFinalJeopardy")
 #    gd_client = gdata.spreadsheet.service.SpreadsheetsService()
 #    gd_client.email = username
 #    gd_client.password = passwd
@@ -342,7 +343,7 @@ class mainWin(wx.Frame):
 #    spreadsheet_id = feed.entry[0].id.text.rsplit('/',1)[1]
 #    feed = gd_client.GetWorksheetsFeed(spreadsheet_id)
 #    worksheet_id = feed.entry[2].id.text.rsplit('/',1)[1]
-##    print worksheet_id
+##    print(worksheet_id)
 
     finalData  = loadtxt('OzaPardy - Final.tsv', dtype='S', delimiter='\t', skiprows=1)
 #    rows = gd_client.GetListFeed(spreadsheet_id, worksheet_id).entry
@@ -398,7 +399,7 @@ class mainWin(wx.Frame):
     self.boxes[1][r2+6].isDailyDouble = True
     self.boxes[1][r3+6].isDailyDouble = True
 
-#DEBUG    print 'DD', r1, r2, r3
+#DEBUG    print('DD', r1, r2, r3)
 
 
   def screenDraw(self, modeType):
@@ -523,7 +524,7 @@ class mainWin(wx.Frame):
   
   def myWrap(self, inStr):
     tmp = textwrap.wrap(inStr, 30)
-#    print tmp
+#    print(tmp)
     tmp = '\n'.join(tmp) 
     return tmp
 
@@ -531,9 +532,9 @@ class mainWin(wx.Frame):
     cPanel = wx.Panel(self)
     
     if cType == 1:
-#DEBUG      print "1",cString
-#DEBUG      print "2",cType
-#DEBUG      print "3",cFName
+#DEBUG      print("1",cString)
+#DEBUG      print("2",cType)
+#DEBUG      print("3",cFName)
     
       iSizer = wx.GridSizer(1, 2, 2, 2)
       cPanel.SetSizer(iSizer)
@@ -549,17 +550,17 @@ class mainWin(wx.Frame):
         NewH = wH * 0.75
         NewW = NewH * w / h
       img = img.Scale(NewW,NewH).ConvertToBitmap()
-#DEBUG      print img.GetSize()
+#DEBUG      print(img.GetSize())
       cButton = wx.Button(cPanel, label=cString)
       cButton.SetFont(wx.Font(35, wx.MODERN, wx.NORMAL, wx.BOLD))
       iButton = wx.BitmapButton(cPanel, bitmap=img)
-#DEBUG      print iButton.GetSize()
+#DEBUG      print(iButton.GetSize())
     elif cType == 2:
       # code for audio layout
-      print "Audio!"
+      print("Audio!")
     elif cType == 3:
       # code for video layout
-      print "Video!"
+      print("Video!")
     else:
       cSizer = wx.BoxSizer() 
       cPanel.SetSizer(cSizer)
@@ -589,26 +590,26 @@ class mainWin(wx.Frame):
     e.GetEventObject().SetLabel('')
     self.currBox = bName+6
 
-#DEBUG    print ('bName:' , bName)
+#DEBUG    print('bName:' , bName)
     tmpBox = self.boxes[mNum][bName+6]
     if tmpBox.isClicked == False:
       tmpBox.clicked()
       e.GetEventObject().Disable()
       self.cPanel=self.newClue(tmpBox.clue, tmpBox.mediaType, tmpBox.mediaFName)
       if tmpBox.isDailyDouble:
-        print 'Daily Double Selected', self.currMode
+        print('Daily Double Selected', self.currMode)
         self.currMode = 'Clue'
         self.cPanel = self.newClue('Daily Double')
         self.screenDraw('Clue')
       else: 
         self.screenDraw('Clue')
         #ser.write('L')  # Unlock Arduino controller
-#DEBUG        print 'XXXX - Serial Write: L'
+#DEBUG        print('XXXX - Serial Write: L')
         #self.serialTimer.Start(serDelay)
         #self.serialTimer.Start()
         self.restartSerial('L')
-      #print "Clue: ", tmpBox.clue
-      print "Response: ", tmpBox.response, "\n"
+      #print("Clue: ", tmpBox.clue)
+      print("Response: ", tmpBox.response, "\n")
     
   def OnClueButtonClicked(self, e):
     tic = dt.datetime.now()
@@ -632,7 +633,7 @@ class mainWin(wx.Frame):
         # self.timer.Start(countdownDelay)
         # self.currClueButton = e.GetEventObject()
         e.GetEventObject().SetLabel("")
-#DEBUG        print "Going blank"
+#DEBUG        print("Going blank")
         #e.GetEventObject().SetLabel("Time Remaining: " + str(self.timeCounter))
       elif btnLabel == 'Daily Double':
         self.currMode = 'Daily'
@@ -648,15 +649,15 @@ class mainWin(wx.Frame):
           self.currMode = 'Clue'
           self.timer.Stop()
           self.restartSerial('R') # Restart the Serial Port
-#DEBUG          print "restarting Serial Port 'R'"
+#DEBUG          print("restarting Serial Port 'R'")
           time.sleep(.05)
           self.restartSerial('L') # Unlock the clickers; enable clickers
-#DEBUG          print "Unlocking clickers"
+#DEBUG          print("Unlocking clickers")
 #          self.serialTimer.Start()
           if self.timeCounter < 10:
             self.timeCounter = 10
         e.GetEventObject().SetLabel(clueText)
-#DEBUG        print "Showing Clue after Blank"
+#DEBUG        print("Showing Clue after Blank")
       elif btnLabel == 'Double Jeopardy':
         self.currMode = self.gameMode
         self.screenDraw(self.currMode)
@@ -680,11 +681,11 @@ class mainWin(wx.Frame):
         # if self.timeCounter < 10:
         #   self.timeCounter = 10
         # e.GetEventObject().SetLabel(clueText)
-        print "Host tried to click the timer.."
+        print("Host tried to click the timer..")
 
     self.Layout()
     toc = dt.datetime.now()
-#    print "button: ", toc-tic
+#    print("button: ", toc-tic)
 
   # This function is called when the clue button is displayed and the clicker
   # is clicked
@@ -693,16 +694,16 @@ class mainWin(wx.Frame):
     mNum = self.mode(self.gameMode)
     clueText = self.boxes[mNum][self.currBox].clue
     self.serialTimer.Stop()
-#DEBUG    print "XXXX - In On Clue Clicker"
+#DEBUG    print("XXXX - In On Clue Clicker")
     if self.currMode == 'Response':
       # This code should never happen
-      print "This should never happen:(OnClueClickerClicked) Clicker"+\
-        "should never do anything if the response is visible" 
+      print("This should never happen:(OnClueClickerClicked) Clicker"+\
+        "should never do anything if the response is visible") 
       self.currMode = self.gameMode
       self.screenDraw(self.currMode)
     else:
       btnLabel = self.currClueButton.GetLabel()
-#DEBUG      print btnLabel
+#DEBUG      print(btnLabel)
       if btnLabel == clueText:
         # If label == Clue, change state to Klok
         self.currMode = 'Klok'
@@ -717,7 +718,7 @@ class mainWin(wx.Frame):
 #        self.timeCounter = 15
 #        self.currClueButton.SetLabel(clueText)
       else:
-        print "clicker was clicked w/ cPanel was blank, daily double, or timer"
+        print("clicker was clicked w/ cPanel was blank, daily double, or timer")
 #        self.currMode = 'Clue'
 #        self.screenDraw('Clue')
 #        self.timer.Stop()
@@ -726,7 +727,7 @@ class mainWin(wx.Frame):
 #        self.currClueButton.SetLabel(clueText)
     self.Layout()
     toc = dt.datetime.now()
-#    print "Clicker: ", toc-tic
+#    print("Clicker: ", toc-tic)
 
   def OnOzaPardyButtonClicked(self, e):
     mNum = self.mode(self.gameMode)
@@ -744,7 +745,7 @@ class mainWin(wx.Frame):
     self.serialTimer.Stop()
     ser.write('C')
     points = int(self.boxes[mNum][self.currBox].value)
-#DEBUG    print "XXXX - Current team: ", self.currTeam, points
+#DEBUG    print("XXXX - Current team: ", self.currTeam, points)
     self.teams[self.currTeam].updateScore(points)
     self.lastCorrectTeam = self.currTeam
     self.currMode = 'Response'
@@ -759,12 +760,12 @@ class mainWin(wx.Frame):
     self.serialTimer.Stop()
     #ser.write('W')
     points = int(self.boxes[mNum][self.currBox].value)
-#DEBUG    print "XXXX - Current team: ", self.currTeam, -1*points
+#DEBUG    print("XXXX - Current team: ", self.currTeam, -1*points)
     self.teams[self.currTeam].updateScore(-1*points)
     self.currMode = 'Clue'
 
 
-    #print ('currBox: ', self.currBox)
+    #print('currBox: ', self.currBox)
     tmpBox = self.boxes[mNum][self.currBox]
     self.cPanel = self.newClue(tmpBox.clue, tmpBox.mediaType,
                                tmpBox.mediaFName)
@@ -864,14 +865,14 @@ class mainWin(wx.Frame):
     self.boxes[mNum][self.currBox].value = wager
 
   def setCurrTeam(self, serRead):
-#DEBUG    print 'XXXX - Serial Read:', serRead, serRead == 'Mice'
+#DEBUG    print('XXXX - Serial Read:', serRead, serRead == 'Mice')
 
     if serRead == 'Mice':
       self.currTeam = 0
-#DEBUG      print "currTeam now Mice", self.currTeam
+#DEBUG      print("currTeam now Mice", self.currTeam)
     else:
       self.currTeam = 1
-#DEBUG      print "currTeam now Men", self.currTeam
+#DEBUG      print("currTeam now Men", self.currTeam)
 
 def main():
   app = wx.App()
