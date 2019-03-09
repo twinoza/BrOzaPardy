@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  {% block head %}
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/ozapardy.css')}}">
+    <link rel="shortcut icon" href="{{url_for('static', filename='img/favicon.ico')}}">
+    <title>{% block title %}{% endblock %} - OzaPardy</title>
+  {% endblock %}
+</head>
+<body id=ozaPardy>
+{% if timer is undefined() %}
+  {% set timer = "0:00" %}
+{% endif %}
+<div style="background-color:darkblue; text-align:center; margin: 20px 0 0 0; ">
+  <div style="float:left; width:20%; vertical-align: middle; margin-left: 0%" >
+    <a href="/"; ><img id="t0"; src="{{url_for('static', filename='img/gear.gif')}}" alt="Init Game" style="width:30px;height:30px; vertical-align: middle;" ></a>
+    <label>TIMER : </label><label id="timer">{{ timer }}</label>
+  </div>
+  {% for i in [0,1,2,3] %}
+    <form class="frmTmName" method="POST" action="/editTeam" style="width:25%">
+      <input type="submit" name={{ teams[i].id }} class="tmName" value="{{ teams[i].name }}" >
+      <input type="hidden" name="hiddenBtnId" value="{{ teams[i].id }}" >
+      <label id="s1">{{ teams[i].score }}</label>
+    </form>
+  {% endfor %}
+<hr />
+</div>
+<div id="content">{% block content %}{% endblock %}</div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

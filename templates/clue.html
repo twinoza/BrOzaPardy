@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Clue{% endblock %}
+
+{% block head %}
+  {{ super() }}  {# This will permit the parent template 'base.html' to render #}
+{% endblock %}
+<!--
+
+This file will display Cluees, Responses, Daily Double, Blank Screen, KLOK, & Final Jeopardy.
+
+
+
+-->
+
+{% block content %}
+<!-- <p style="color:white"> {{ row }}, {{ col }} -- Are the row and Column Numbers </p>
+<p style="color:white"> {{ clueVal }} -- is the clueVal array </p>
+ -->
+  <div style="text-align:center">
+    <!-- This will display clue box on screen -->
+    <span>
+        {% if mediaClue %}
+          <iframe class="clueBox"; name="media"; %}>{{ cv }}</iframe>
+          <button class="clueBox"; name="clue~{{col~row}}"; %}>{{ cv }}</button>
+        {% else %}
+          <button class="clueBox"; name="clue~{{col~row}}"; %}>{{ cv }}</button>
+        {% endif %}
+    </span>
+<!--     <span>
+        <a href="/ans/{{col~row}}"><button class="gmBox"; name="clue~{{col~row}}"; %}>Correct</button></a>
+        <a href="/ans/{{col~row}}"><button class="gmBox"; style="margin:30px"; name="clue~{{col~row}}"; %}>Incorrect</button></a>
+    </span>
+ -->    </div>
+  </div>
+{% endblock %}

@@ -1,5 +1,7 @@
 OzaPardy
 ========
+THE FOLLOWING IS CURRENTLY INAPPLICABLE AND WILL NEED TO BE REVISED!!!!
+
 Oza Family Jeopardy Game for Annual Holiday Party
 
 This program simply runs by typing (b/c the file is an executable): 
