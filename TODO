@@ -16,3 +16,4 @@
 -Ability to rename teams
 -Change display so Lower score team starts double jeopardy
 -Test that Neal can become a contributor
+-Change Print statements to work with Python 3.5+
