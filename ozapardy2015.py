@@ -9,6 +9,7 @@ Started: Dec 16, 2012
 Dec 24th 2013:  Fixed bugs to actually make it work.
 Dec 23rd 2014:  Add in comments and clear up code for media ability
 Dec 15th 2016:  Address some of the todo's
+Mar 9th 2019: We tested things!
 '''
 
 import sys
