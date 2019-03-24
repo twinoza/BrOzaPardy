@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+	<h2>Create Note</h2>
+	<form method='POST' class='noteform'>
+		<label for='note_title'>
+			<p>Title</p>
+			<input type='text' name='note_title'/>
+		</label>
+		<label for='note_content'>
+			<p>Content</p>
+			<textarea name='note_content' id='notetext'></textarea>
+		</label>
+		
+		<input type='submit' name='submit' value='Create'/>
+	</form>
+
+
+	<div class='noteEdit'>
+		{% if notes %}  <!-- Jinja2 code logic inside -->
+			{% for note in notes %}
+				<div class='note'>
+					{{note.title}}
+					{{note.content}}
+				</div>
+			{% endfor %}
+		{% endif %}
+	</div>
+{% endblock %}

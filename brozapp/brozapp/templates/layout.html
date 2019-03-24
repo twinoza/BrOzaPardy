@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel='stylesheet'
+		 type='text/css'
+		 href='{{ url_for("static", filename="css/style.css")}}'>
+	</head>
+
+	<body>
+		<!-- Navigation bar for all the views -->
+		<nav class='navbar'>
+			<ul class='left'>
+				<li><a href="/" class='name'>BrOzaPardy</a></li>
+			</ul>
+			<ul class='right'>
+				<li><a href="/edit">+Add Ans/Clue</a></li>
+			</ul>
+		</nav>
+		{% block body %}
+		{% endblock %}
+	</body>
+</html>

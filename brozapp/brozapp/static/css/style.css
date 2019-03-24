@@ -1,0 +1,107 @@
+* { margin: 0; padding: 0; }
+h2 { margin: 1rem; }
+
+.left { float: left; margin-left: 2rem; }
+.right { float: right; margin-right: 2rem; }
+
+.navbar {
+	width: 100%;
+	height: 48px;
+	margin: 0;
+	background-color: black;
+}
+
+.navbar ul, li {
+	display: inline-block;
+	height: 100%;
+}
+
+.navbar ul li a {
+	line-height: 48px;
+	display: inline-block;
+	height: 100%;
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
+	color: white;
+	text-decoration: none;
+	text-transform: uppercase;
+}
+
+.navbar ul li a:hover {
+	background-color: gray;
+	color: blue;
+	cursor: pointer;
+}
+
+.notelist {
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+
+.notelist .category {
+	position: relative;
+	width: 15%;
+	height: 4rem;
+	display: grid;
+	background: blue;
+	margin: 0.5rem;
+	resize: none;
+}
+
+.notelist .category h3 {
+	width: 90%;
+	color: white;
+	box-sizing: border-box;
+	font-size: large;
+	text-align: center;
+	margin: auto;
+}
+
+.note {
+	width: 15%;
+	height: 10rem;
+	display: grid;
+	margin: 0.5rem;
+	resize: none;
+	overflow: visible;
+}
+
+.note button { 
+	width: 100%;
+	height: 10rem;
+	background: #ffeaa7;
+	color:blue;
+	text-align: center;
+	font-size: xx-large;
+	margin: auto;
+}
+
+.ansWin {
+	width: 100%;
+	height: 100%;
+	display: grid;
+}
+
+.ansWin button {
+	width: 100%;
+	height: 45rem;
+	background: blue;
+	color: white;
+	text-align: center;
+	font-size: xx-large;
+	font-weight: bolder;
+	margin: auto;	
+}
+
+.noteform {
+	width: 50%;
+	margin-top: 0.5rem;
+	margin-left: auto;
+	margin-right: auto;
+}
+.noteform textarea {
+	width: 100%;
+	height: 300px;
+}

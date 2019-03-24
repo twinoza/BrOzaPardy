@@ -1,0 +1,15 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+	<h2>Answer is</h2>
+	<div class='ansWin'>
+	  <!-- Jinja2 code logic inside  curlys %  <h4>Value of board @ if stmt:  <br />{{board}}</h4> -->
+
+		
+			<div class='ans'>
+				<button onclick="valClicked">This is the ANSWER</button>
+				
+			</div>
+		{% if answer %}  {% endif %}
+	</div>
+{% endblock %}
