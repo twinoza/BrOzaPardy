@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect
 import glob
 import logging
-from brozapp.utils import get_board, create_board
+from brozapp.utils import getBoard, get_ans, create_board
 
 bp = Blueprint(__name__, __name__, template_folder='templates')
 
@@ -19,7 +19,7 @@ bp = Blueprint(__name__, __name__, template_folder='templates')
 def list():
 	# call get_board in utils.py to get the values
 	# save game values in variable board - pass variable board to disp_board.html
-	return render_template('disp_board.html', board=get_board('Single'))
+	return render_template('dispBoard.html', board=getBoard('Single'))
 
 @bp.route('/edit', methods=['POST', 'GET'])
 def edit():
@@ -32,9 +32,10 @@ def edit():
 
 	return render_template('note_edit.html')
 
-@bp.route('/valClicked', methods=['GET'])
+@bp.route('/valClicked')
 def valClicked():
-		return render_template('showAns.html') #, answer = get_ans() )
+	print("Start valClicked")
+	return render_template('showAns.html', cell=this.id, answer = get_ans() )
 
 # @bp.route('/createnote', methods=['POST', 'GET'])
 # def show():

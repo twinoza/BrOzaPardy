@@ -30,9 +30,9 @@ def edit():
 
 	return render_template('note_edit.html')
 
-@bp.route('/valClicked', methods=['GET'])
-def valClicked():
-		return render_template('showAns.html') #, answer = get_ans() )
+@bp.route('/try', methods=['GET'])
+def tryValClick():
+		return render_template('showAns.html', cell=this.id, answer = get_ans() )
 
 # @bp.route('/createnote', methods=['POST', 'GET'])
 # def show():
