@@ -1,13 +1,18 @@
 """
 Model Classes for Game objects
 """
+from OzaPardy.models.timer_m import Timer
+from OzaPardy.models.team_m import Team
+from OzaPardy.models.category_m import Category
+from OzaPardy.models.grid_m import Grid
 
 class Game(object):
-    def __init__(self, teams, grids, final_category):
+    def __init__(self, teams, grids, final_category, time_up = 10.):
         """
-        :param teams:
-        :param grids:
+        :param teams (list): List of Team objects
+        :param grids (list): List of first and second round objects
         :param final_category:
+        :param time_up (float): seconds allowed to answer each question
         """
         self.teams = teams
         self.teams_hash = {t.name:ind for ind,t in enumerate( teams)}
@@ -17,7 +22,7 @@ class Game(object):
         #instantiate the game
         self.round = 1
         self.active_team =  None
-        self.timer =  #TODO: make timer object
+        self.timer =  Timer( time_up)
 
     def as_dict(self):
         return {"@module": self.__class__.__module__,
