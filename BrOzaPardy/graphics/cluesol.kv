@@ -1,0 +1,32 @@
+#:kivy 1.9.0
+<ClueSolPopup@Popup>:  # This is the popup to be used to show clue/response - to use, setup the value of title and text as follows:
+#  Factory.ClueSolPopup.title = 'My New Title'
+# todo: need to add more comments here
+
+  id: 'sol_title'
+  auto_dismiss: False
+  size_hint: 1, .9
+  pos_hint: { 'x':0, 'y':0}
+  title: 'Cat 100'
+  FloatLayout:
+    Label:
+      id: 'solution'
+      text: 'This is something one does before releasing the App to users'
+      font_size: 20
+      pos_hint: { 'x':0.0, 'y':.3}
+
+    Button:
+      id: 'done'
+      text:'CORRECT'
+      background_color: 0,1,0,.6
+      size_hint: 0.4, 0.1
+      pos_hint: {'x':.05,'y':.05}
+      on_release: root.dismiss()
+
+    Button:
+      id: 'done'
+      text:'WRONG'
+      background_color: 1,0,0,.6
+      size_hint: 0.4, 0.1
+      pos_hint: {'x':.55,'y':.05}
+      on_release: root.dismiss()

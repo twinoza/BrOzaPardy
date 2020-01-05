@@ -1,0 +1,20 @@
+#:kivy 1.9.0
+<MenuPopup@Popup>:
+  id: 'menu'
+  pos_hint: { 'x':.3, 'top':.9}
+  size_hint: .3, .5
+  GridLayout:
+    cols:1
+    Button:
+      id: initBtn
+      text: 'Initialize'
+      on_release: 
+        app.initApp(self)
+        root.dismiss()
+        
+    Button:
+      text: 'Disabled Item'
+      disabled: True
+    Button:
+      text: 'exit'
+      on_release: app.stop()

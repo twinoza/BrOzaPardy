@@ -1,0 +1,75 @@
+#:kivy 1.9.0
+#:import Factory kivy.factory.Factory
+
+# This App needs the following files to operate:
+# bop.py
+
+# graphics/bop.kv
+# graphics/templates.kv
+# graphics/scoreboard.kv
+# graphics/cluesol.kv
+# graphics/menu.kv
+
+
+
+# <WrpBtn>:
+#   halign: 'center'
+#   valign: 'center'
+#   font_size: 20
+#   padding: (50, 50)
+#   size_hint_y: None
+#   text_size: self.width, None
+#   height: self.texture_size[1]
+  
+# Category column includes label & 5 btns
+<GridCat@BoxLayout>: 
+  orientation: 'vertical'
+  padding: 3
+  spacing: 5
+  BkLabel:   # allow label to have background color
+    id: catLabel
+    text: 'BkLabel long long text'
+  GridButton:
+    text: '100'
+  GridButton:
+    text: '200' 
+  GridButton:
+    text: '300'
+  GridButton:
+    text: '400'
+  GridButton:
+    text: '500'
+
+<MainWin>:
+  BoxLayout:  # main screen - scorebd + game grid
+    id: mainScreen
+    spacing: 10
+    orientation: 'vertical'
+    size: root.width, root.height-10
+    Scrbd:
+      id: 'scoreboard'
+    
+    BoxLayout:  # Game Grid
+      id: gameGrid
+      pos_hint: { 'top': .9 }
+      GridCat:
+        id: cat1
+        # text: Factory.GridButton.myLabel('cat1')
+      GridCat:
+        id: cat2
+        text: 'cat2'
+      GridCat:
+        id: cat3
+        text: 'cat3'
+      GridCat:
+        id: cat4
+        text: 'cat4'
+      GridCat:
+        id: cat5
+        text: 'cat5'
+      GridCat:
+        id: cat6
+        text: 'cat6'
+
+
+

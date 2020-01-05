@@ -1,0 +1,37 @@
+#:kivy 1.9.0
+<Scrbd@BoxLayout>:  #scoreboard
+  id: 'scoreboard'
+  size_hint: 1, .1
+  pos_hint: { 'top': 1 }
+
+  GridLayout:  # Team1 score
+    id: 'team1'
+    cols:1
+    size_hint: .3, 1
+    Label:
+      id: 'name'
+      font_size: 20
+      text: 'Winners1'
+    Label:
+      id: 'score'
+      text: '200' 
+  BoxLayout:
+    orientation: 'vertical'
+    size_hint: .4, 1
+    Button:  # setup/Menu button
+      text: 'BrOzaPardy: '
+      color: .8,.85,.3,1
+      background_color: 0,0,1,1
+      font_size: 35
+      on_release: app.setup()
+  GridLayout:  # Team2 score
+    id: 'team2'
+    cols:1
+    size_hint: .3, 1
+    Label:
+      id: 'name'
+      font_size: 20
+      text: 'Winners2'
+    Label:
+      id: 'score'
+      text: '200' 
