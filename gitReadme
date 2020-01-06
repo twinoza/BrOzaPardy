@@ -1,0 +1,13 @@
+# The BrOzaPardy sub-directory was created by using
+
+git clone https://github.com/twinoza/BrOzaPardy.git
+
+
+# The following cmds can be used for git
+git status
+git add -A
+git commit -m "comment about this commit"
+git push
+    username:oldfoagie
+    pswd:samo1234
+

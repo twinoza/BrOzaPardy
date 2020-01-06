@@ -1,6 +1,6 @@
 # This App needs the following files to operate:
 # bop.py
-
+#
 # graphics/bop.kv
 # graphics/templates.kv
 # graphics/scoreboard.kv
