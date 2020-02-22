@@ -12,17 +12,11 @@
 
 
 
-# <WrpBtn>:
-#   halign: 'center'
-#   valign: 'center'
-#   font_size: 20
-#   padding: (50, 50)
-#   size_hint_y: None
-#   text_size: self.width, None
-#   height: self.texture_size[1]
-  
+
+
 # Category column includes label & 5 btns
 <GridCat@BoxLayout>: 
+  catLabel: catLabel   # set variable to see cat title in bop.py file
   orientation: 'vertical'
   padding: 3
   spacing: 5
@@ -45,7 +39,7 @@
     id: mainScreen
     spacing: 10
     orientation: 'vertical'
-    size: root.width, root.height-10
+    size: root.width, root.height
     Scrbd:
       id: 'scoreboard'
     

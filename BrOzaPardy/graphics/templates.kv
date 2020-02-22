@@ -1,10 +1,17 @@
 #:kivy 1.9.0
+<Widget>:   # used for debugging -it will highlight all widgets
+  canvas.after:
+    Line:
+      rectangle: self.x+1,self.y+1,self.width-1,self.height-1
+      dash_offset: 5
+      dash_length: 3
+
 <Label>:
   font_size:18
   color: 1,1,1,1
     
 <Button>:
-  font_size:20
+  font_size:24
   color: 1,1,1,1
 
 <BkColor@Widget>
@@ -21,9 +28,26 @@
   text: "No Text"
   text_size: self.size   # this will allow text to wrap
   halign: 'center'       # center the text on button
+  valign: 'center'       # center the category labels vertically
   size_hint: 1, .6
-  color: .01, .85, .77, 1
+  # color: .01, .85, .77, 1  # cyan
+  color: .8,.85,.3,1         # yellow
   background_color: 1,1,1,.3
+
+# <CkboxLabel@CheckBox+Label>
+#     BoxLayout:
+#       orientation: 'horizontal'
+#       CheckBox:
+#         active: False
+#         group: 'none'
+#       Label:
+#         text: 'None C'
+#         text_size: self.size
+#         halign: 'left'
+#         valign: 'center'
+#         size_hint: 1, .6
+#         color: .8, .85, .3, 1  # yellow
+#         background_color: 1,1,1,.3
 
 <GridButton@Button>
   # this template for all buttons on the grid
@@ -32,5 +56,5 @@
   color: 1,1,1,1
   on_release: 
     p=Factory.ClueSolPopup()
-    Factory.MainWin().gridBtnClicked(self.text)
+    Factory.MainWin().gridBtnClicked(self)
     self.text =''

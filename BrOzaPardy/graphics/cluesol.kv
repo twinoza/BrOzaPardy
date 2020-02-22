@@ -10,22 +10,24 @@
   title: 'Cat 100'
   FloatLayout:
     Label:
-      id: 'solution'
+      name: 'solution'
       text: 'This is something one does before releasing the App to users'
       font_size: 20
       pos_hint: { 'x':0.0, 'y':.3}
 
     Button:
-      id: 'done'
-      text:'CORRECT'
+      name: 'tm1Clicked'
+      text: 'team' #root.tm1Name
       background_color: 0,1,0,.6
       size_hint: 0.4, 0.1
       pos_hint: {'x':.05,'y':.05}
-      on_release: root.dismiss()
+      on_release: 
+        app.tm1_clickedIn
+        root.dismiss()
 
     Button:
-      id: 'done'
-      text:'WRONG'
+      name: 'tm2Clicked'
+      text: '' #root.tm2Name
       background_color: 1,0,0,.6
       size_hint: 0.4, 0.1
       pos_hint: {'x':.55,'y':.05}
