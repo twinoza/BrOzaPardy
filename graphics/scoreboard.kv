@@ -1,0 +1,107 @@
+#:kivy 1.9.0
+
+<Scrbd>:  #scoreboard
+  id: scrbd
+  vtm1: tm1.__self__
+  vscore1: score1.__self__
+  vtm2: tmName2.__self__
+  vscore2: score2.__self__
+  size_hint: 1, .1
+  pos_hint: { 'top': 1 }
+
+  # The v* will be variable name for respective ids
+  # So, vtmName1 will be used for id tmName1
+  # tm1: 'TeamName1'
+  # score1: '000'
+  # tm2: 'TeamName2'
+  # score2: '000'
+
+  GridLayout:  # Team1 score
+    id: team1
+    cols:1
+    size_hint: .3, 1
+    Label:
+      id: tm1
+      font_size: 20
+      text: 'NoTeam'
+    Label:
+      id: score1
+      text: '000'
+  BoxLayout:
+    orientation: 'vertical'
+    size_hint: .4, 1
+    Button:  # setup/Menu button
+      text: 'BrOzaPardy: '
+      color: .8,.85,.3,1
+      background_color: 0,0,1,1
+      font_size: 35
+      on_release: app.setup()
+  GridLayout:  # Team2 score
+    cols:1
+    size_hint: .3, 1
+    Label:
+      id: tmName2
+      font_size: 20
+      text: 'NoTeam'
+    Label:
+      id: score2
+      text: '00'
+
+
+<ScoreMod>:
+  pos_hint: { 'x':.2, 'top':.9}
+  size_hint: .6, .7
+  title: 'Change Score'
+  vnewScore: newScore.__self__
+
+  FloatLayout:
+    background_color: 0,0,1,.3
+    orientation: 'vertical'
+    TextInput:
+      id: newScore
+      hint_text: 'Type New Score Here'
+      text: 'None'
+      size_hint: .8, .15
+      pos_hint: { 'x':.1, 'y':.7}
+      font_size: 32
+      valign: 'center'
+      halign: 'center'
+    
+    Button:
+      size_hint: .3, .1
+      pos_hint: { 'x':.1, 'y':.5}
+      text: 'team1'
+      on_release:
+        Factory.Scrbd.vscore1: newScore.text
+        # root.dispatch('on_newScore', self, newScore )
+        root.on_newScore(self.text, newScore.__self__)
+        # Scrbd = Factory.Scrbd()
+        # print('newScore='+root.newScore)
+        # print('old score1='+Scrbd.score1)
+        # Scrbd.score1 = root.newScore
+        # print('new score1='+Scrbd.score1)
+        # print('newScore='+root.newScore)
+        root.newScore = ''
+    Button:
+      size_hint: .3, .1
+      pos_hint: { 'x':.6, 'y':.5}
+      text: 'team2'
+      on_release:
+        app.setScore('score2', root.ids.newScore.text)
+        root.ids.newScore.text = ''
+
+    BkLabel:
+      id: scoreModName1
+      size_hint: .9, .2
+      pos_hint: { 'x':.05, 'y':.25}
+      text: "Enter New Score, click the team\'s name above.  When all done, click the 'Quit' below"
+      background_color: 0,0,1,.3
+
+    Button: 
+      text: 'Quit'
+      size_hint: .8, .1
+      pos_hint: { 'x':.1, 'y':.1}
+      on_release: 
+        # app.stop()
+        root.dismiss() 
+

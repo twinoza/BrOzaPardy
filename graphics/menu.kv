@@ -1,0 +1,92 @@
+#:kivy 1.9.0
+
+<ReallyQuitPup@Popup>:
+  # this screen is opened when "Exit" button is clicked on the
+  # Main menu called MenuPopup
+  pos_hint: { 'x':.25, 'y':.4}
+  size_hint: .5, .3
+  title: 'Really Quit'
+  BoxLayout:
+    orientation: 'vertical'
+    Label:
+      text: 'Do you really want to quit the BrOzaPardy?'
+    BoxLayout:
+      orientation: 'horizontal'
+      Button:
+        text: 'YES'
+        size_hint: .5, .8
+        # focus: True
+        on_release: app.stop()
+      Button:
+        text: 'NO'
+        size_hint: .5, .8
+        on_release: root.dismiss()
+      
+
+<MenuPopup@Popup>:
+  # this screen is opened when "BrOzaPardy:" button is clicked at the
+  # top on the screen
+  pos_hint: { 'x':.3, 'top':.9}
+  size_hint: .35, .5
+  BoxLayout:
+    id: menu
+    orientation: 'vertical'
+    pos: 250,250
+    Button:
+      id: initBtn
+      text: 'Start Game'
+      on_release: 
+        # app.initApp("Init")
+        root.dismiss()
+        
+    Button:
+      id: gmTypeBtn
+      text: 'Options >'
+      on_release: 
+        Factory.OptionsMenu().open()
+        root.dismiss()
+      
+    Button:
+      text: 'Exit'
+      on_release:
+        Factory.ReallyQuitPup().open()
+
+<OptionsMenu@Popup>:
+  # this screen is opened when "Options >" button is clicked on the
+  # Main menu called MenuPopup
+  pos_hint: { 'x':.35, 'y':.4}
+  size_hint: .3, .6
+  title: 'Game Type/Start Over'
+  BoxLayout:
+    orientation: 'vertical'
+    # disabled: True
+    Button:
+      text: 'Start Over'
+      on_release: 
+        app.initApp('Init')   # Do some init stuff
+        root.dismiss()        # close GmTypeMenu
+    Button:
+      text: 'Single'
+      on_release: 
+        app.initApp("Single")
+        root.dismiss()
+
+    Button:
+      text: 'Double'
+      on_release: 
+        app.initApp("Double")
+        root.dismiss()
+      
+    Button:
+      text: 'Final'
+      on_release: 
+        app.initApp("Final")
+        root.dismiss()
+
+    Button:
+      text: 'Modify Scores'
+      on_release: 
+        Factory.ScoreMod().open()
+        # app.initApp("ScoreMod")
+        root.dismiss()
+        

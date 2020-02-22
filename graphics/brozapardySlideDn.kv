@@ -1,0 +1,97 @@
+#:kivy 1.9.0
+
+# <brozapardy_kv@GridLayout>:
+
+# <myMain>:
+#   GridLayout:
+#     cols: 1
+#     size: 800, 500
+
+Switcher:
+  BOPWindow:
+  ClueWindow:
+
+
+<BOPWindow@Screen>:
+  name: 'BOPboard'
+
+  GridLayout:
+    cols:1
+    GridLayout:
+      id: 'scoreboard'
+      cols:3
+      size_y:10
+      size_hint: 1, None
+      GridLayout:
+        id: 'team1'
+        cols:1
+        size_hint: .7, 1
+        Label:
+          id: 'name'
+          font_size: 20
+          text: 'Winners1'
+        Label:
+          id: 'score'
+          text: '200' 
+      Button:
+        id: btn
+        text: 'BrOzaPardy: '
+        color: 1,0,0,.6
+        font_size: 35
+        on_press: 
+          # app.setup()
+          dropdown.open(self)
+      # Widget:
+      DropDown:
+        id: dropdown
+        on_select: btn.text='{}'.format(args[0])
+        on_parent: self.dismiss() 
+        Button:
+          text: 'Enter # of Teams'
+          size_hint: .5, None
+          height: 30
+          on_release: root.select('Enter # of Teams')
+        Button:
+          text: 'Enter Team Names'
+          size_hint: .5, None
+          height: 30
+          on_release: root.select('Enter Team Names')
+        Button:
+          text: 'Exit BrOzaPardy'
+          size_hint: .5, None
+          height: 30
+          on_release:
+            root.select('Exit')
+            app.stop()
+          
+          
+      GridLayout:
+        id: 'team2'
+        cols:1
+        size_hint: .7, 1
+        Label:
+          id: 'name'
+          font_size: 20
+          text: 'Winners2'
+        Label:
+          id: 'score'
+          text: '200' 
+
+    Button:
+      text: 'Submit'
+      size_hint: .8, .50
+      pos_hint: {'x':5 , 'y':5}
+      on_release:
+        app.root.current = 'clue' 
+        root.manager.transition.direction = 'down'
+
+<ClueWindow@Screen>:
+  name: 'clue'
+
+  Button:
+    text: 'Go Back'
+    on_release: 
+      app.root.current = 'BOPboard'
+      root.manager.transition.direction = 'up'
+
+
